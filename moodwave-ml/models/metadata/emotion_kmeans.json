@@ -1,0 +1,26 @@
+{
+  "model_name": "emotion_kmeans",
+  "model_version": "1.0.0",
+  "trained_at": "2026-09-23T23:50:33",
+  "features": [
+    "danceability",
+    "energy",
+    "loudness",
+    "speechiness",
+    "acousticness",
+    "instrumentalness",
+    "liveness",
+    "valence",
+    "tempo",
+    "duration_ms"
+  ],
+  "training_rows": 115657,
+  "n_clusters": 5,
+  "random_state": 42,
+  "metrics": {
+    "inertia": 711390.2585674578,
+    "silhouette_score_sample": 0.16392194294817977,
+    "silhouette_sample_rows": 5000
+  },
+  "sklearn_version": "1.9.1"
+}

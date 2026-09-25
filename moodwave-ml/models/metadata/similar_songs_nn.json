@@ -1,0 +1,21 @@
+{
+  "model_name": "similar_songs_nn",
+  "model_version": "1.0.0",
+  "trained_at": "2026-09-23T23:50:33",
+  "features": [
+    "danceability",
+    "energy",
+    "loudness",
+    "speechiness",
+    "acousticness",
+    "instrumentalness",
+    "liveness",
+    "valence",
+    "tempo",
+    "duration_ms"
+  ],
+  "training_rows": 115657,
+  "metric": "euclidean",
+  "default_neighbors": 5,
+  "sklearn_version": "1.9.1"
+}

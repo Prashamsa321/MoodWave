@@ -1,0 +1,31 @@
+{
+    "model_name": "popularity_regression",
+    "model_version": "1.0.0",
+    "trained_at": "2026-09-23T23:49:37",
+    "target": "popularity",
+    "features": [
+        "danceability",
+        "energy",
+        "key",
+        "loudness",
+        "mode",
+        "speechiness",
+        "acousticness",
+        "instrumentalness",
+        "liveness",
+        "valence",
+        "tempo",
+        "duration_ms",
+        "time_signature"
+    ],
+    "training_rows": 1841,
+    "test_rows": 461,
+    "random_state": 42,
+    "metrics": {
+        "mae": 9.085448047200211,
+        "mse": 211.0004313561596,
+        "rmse": 14.525853894217702,
+        "r2": -0.014137182604360365
+    },
+    "sklearn_version": "1.9.1"
+}

@@ -1,0 +1,9 @@
+{
+    "historical_rows": 2400,
+    "genre_rows": 113550,
+    "country_rows": 2110316,
+    "track_catalog_rows": 115657,
+    "unique_genre_tracks": 89741,
+    "single_genre_tracks": 73442,
+    "multi_genre_tracks": 16299
+}

@@ -1,0 +1,33 @@
+{
+    "model_name": "mood_classifier",
+    "model_version": "1.0.0",
+    "trained_at": "2026-09-23T23:49:37",
+    "target": "mood_label",
+    "features": [
+        "danceability",
+        "key",
+        "loudness",
+        "mode",
+        "speechiness",
+        "acousticness",
+        "instrumentalness",
+        "liveness",
+        "tempo",
+        "duration_ms",
+        "time_signature"
+    ],
+    "training_rows": 71792,
+    "test_rows": 17949,
+    "random_state": 42,
+    "best_parameters": {
+        "max_depth": 12,
+        "min_samples_leaf": 15
+    },
+    "metrics": {
+        "accuracy": 0.6521254665998105,
+        "macro_precision": 0.6194731592334108,
+        "macro_recall": 0.5979868230716957,
+        "macro_f1": 0.6057672794806078
+    },
+    "sklearn_version": "1.9.1"
+}

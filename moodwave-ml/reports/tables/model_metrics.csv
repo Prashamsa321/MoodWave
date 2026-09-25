@@ -1,0 +1,7 @@
+task,model,MAE,RMSE,R2,Accuracy,Macro F1,Macro Precision,Macro Recall,Weighted F1,Top-3 Accuracy
+Popularity regression,DummyRegressor (mean),9.15239642701022,14.514568074844647,-0.012561932994553215,,,,,,
+Popularity regression,LinearRegression,9.085448047200211,14.525853894217702,-0.014137182604360365,,,,,,
+Mood classification,DummyClassifier,,,,0.370215610897543,0.13509392534764578,,,,
+Mood classification,DecisionTreeClassifier,,,,0.6521254665998105,0.6057672794806078,0.6194731592334108,0.5979868230716957,,
+Genre classification,DummyClassifier,,,,0.01361563074409422,0.00023987027815357455,,,,
+Genre classification,RandomForestClassifier,,,,0.34406698890326093,0.2942505445626037,,,0.32153079255297384,0.5278099257948125

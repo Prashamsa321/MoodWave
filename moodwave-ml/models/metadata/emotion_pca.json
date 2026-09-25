@@ -1,0 +1,25 @@
+{
+  "model_name": "emotion_pca",
+  "model_version": "1.0.0",
+  "trained_at": "2026-09-23T23:50:33",
+  "features": [
+    "danceability",
+    "energy",
+    "loudness",
+    "speechiness",
+    "acousticness",
+    "instrumentalness",
+    "liveness",
+    "valence",
+    "tempo",
+    "duration_ms"
+  ],
+  "training_rows": 115657,
+  "n_components": 2,
+  "explained_variance_ratio": [
+    0.28680362580004676,
+    0.15217529593829204
+  ],
+  "explained_variance_total": 0.4389789217383388,
+  "sklearn_version": "1.9.1"
+}

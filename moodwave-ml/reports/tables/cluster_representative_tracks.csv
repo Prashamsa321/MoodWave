@@ -1,0 +1,26 @@
+cluster_id,track_id,track_name,artist_name,primary_genre,mood_label,distance_to_centroid
+0,70sKIAQgaVN2zWEEyOpyMZ,All Night (BTS World Original Soundtrack) [Pt. 3],BTS;Juice WRLD,k-pop,Euphoric,0.501184947663255
+0,4Tyh4Hjzmfuk8FrO8HNlWI,One Touch,Jess Glynne;Jax Jones,house,Euphoric,0.5183139610459634
+0,4CrvuZnTyzReLCcXRMETLK,Yo Quiero Vivir,Manuel Carrasco,latin,Euphoric,0.5213870632923961
+0,7HRfX5It3lx1E02wTRR0RX,MERCI,SDM,,Euphoric,0.5480427380583229
+0,58rVY9wmIYBOzdLXygVs6i,Mood,KeBlack,,Euphoric,0.5722402948818591
+1,6REc8idTpdDdMlMIcnER2F,That Heart Belongs To Me,George Jones,honky-tonk,Melancholic,0.5336835072028133
+1,7n8ORc71tQ8NXkWfhg898Z,Ride Home,Alif;Noor Mohammad,folk,Melancholic,0.5875845356334718
+1,4Wy375MMykH82pUm8EN3iE,Better Now,Oh Wonder,electro,Peaceful,0.5937891645227458
+1,4hL6Jr0nOm5erNhCv7FpCT,Pé no Mar,Dillaz,,Melancholic,0.6459164964936174
+1,39fD0qvjgk8RarJnoBiDTx,Lovesick,Laufey,,Melancholic,0.6513972619292889
+2,09cgbbadzZSKFd1hGN23p5,Water,Bicep;Clara La San,ambient,Aggressive,0.6289321757538353
+2,0rQ146AWbwiDC1DheKXJxm,Eat the Meek,Frank Turner,acoustic,Aggressive,0.6440708008465262
+2,5RoIXwyTCdyUjpMMkk4uPd,Sweet Disposition,The Temper Trap,,Aggressive,0.7027930387492055
+2,5QZ5Jsj6SUFXui8KEfLT2q,Siniestro Corazón,Anabantha,goth,Aggressive,0.7513129806646109
+2,4Ig4lqvambqo9NPYoDklJe,La nuit marche avec moi,Alcest,black-metal,Aggressive,0.7907571046383053
+3,7N02vK6QmHRiMVa6oy3HUA,Spirit of Grace,Stanton Lanier,new-age,Melancholic,0.8743296693296342
+3,2N6aUazlszu1DDPnSCGifu,In The Morning Light,Yanni,new-age,Melancholic,0.9027536627482095
+3,6BXbJwdT4v6k4QdOUagTFF,'Tis So Sweet,Jim Brickman,new-age,Melancholic,0.9031114262581916
+3,6LdtCV5bgLQhfGn72fpSvY,Somewhere Over the Rainbow,Tommy Emmanuel,bluegrass,Melancholic,0.9068836884232161
+3,1PjFebgYCE4h0l8WJvnFHG,Filter,Smyang Piano,piano,Melancholic,0.9223977715989262
+4,1y62mw3mC3mtVOOtjrVVl1,@champagnepapi,"Otsochodzi, Oki, lohleq",,Euphoric,1.0348044408008006
+4,2i6m9IDP7obOv5qj9J2d4U,Terrano,"Wang, Dani Gambino, Mateos Nps",,Euphoric,1.0783026621275904
+4,5IBZrEnVVYYfKXHTfiy2Td,Ao Que É Digno - Ao Vivo,Paulo Rogerio,groove,Aggressive,1.090886943744765
+4,6Kd4iGylMjrpr1xVbuYKVw,the 27 club,JPEGMAFIA,industrial,Euphoric,1.1743911798132372
+4,0cN7RFTwvomWbnRn3a6aYW,Nós - Ao Vivo,Cássia Eller,mpb,Euphoric,1.1751912839016256

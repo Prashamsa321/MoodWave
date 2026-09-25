@@ -1,0 +1,37 @@
+{
+    "model_name": "genre_classifier",
+    "model_version": "1.0.0",
+    "trained_at": "2026-09-23T23:49:37",
+    "target": "track_genre",
+    "features": [
+        "danceability",
+        "energy",
+        "key",
+        "loudness",
+        "mode",
+        "speechiness",
+        "acousticness",
+        "instrumentalness",
+        "liveness",
+        "valence",
+        "tempo",
+        "duration_ms",
+        "time_signature"
+    ],
+    "training_rows": 58753,
+    "test_rows": 14689,
+    "class_count": 112,
+    "random_state": 42,
+    "parameters": {
+        "n_estimators": 100,
+        "max_depth": 16,
+        "min_samples_leaf": 2
+    },
+    "metrics": {
+        "accuracy": 0.34406698890326093,
+        "macro_f1": 0.2942505445626037,
+        "weighted_f1": 0.32153079255297384,
+        "top_3_accuracy": 0.5278099257948125
+    },
+    "sklearn_version": "1.9.1"
+}

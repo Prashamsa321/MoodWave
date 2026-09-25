@@ -1,0 +1,428 @@
+@import "tailwindcss";
+
+/* ---------- Base ---------- */
+* {
+  box-sizing: border-box;
+}
+
+html, body, #root {
+  margin: 0;
+  padding: 0;
+  min-height: 100%;
+  font-family: "MS Sans Serif", "Tahoma", "Verdana", sans-serif;
+  color: #1e293b;
+}
+
+/* ---------- Retro background ---------- */
+.retro-bg {
+  background:
+    radial-gradient(circle at 20% 20%, #b8a4e0 0%, transparent 45%),
+    radial-gradient(circle at 80% 60%, #a89ad6 0%, transparent 50%),
+    linear-gradient(180deg, #7c6bb0 0%, #5b4a8a 100%);
+  background-attachment: fixed;
+}
+
+/* Sparkles overlay */
+.sparkles-layer {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background-image:
+    radial-gradient(2px 2px at 10% 15%, #fff 40%, transparent 50%),
+    radial-gradient(2px 2px at 25% 70%, #fff 40%, transparent 50%),
+    radial-gradient(1px 1px at 40% 25%, #fff 40%, transparent 50%),
+    radial-gradient(2px 2px at 60% 85%, #fff 40%, transparent 50%),
+    radial-gradient(1px 1px at 75% 35%, #fff 40%, transparent 50%),
+    radial-gradient(2px 2px at 88% 60%, #fff 40%, transparent 50%),
+    radial-gradient(1px 1px at 15% 45%, #fff 40%, transparent 50%),
+    radial-gradient(1px 1px at 50% 10%, #fff 40%, transparent 50%),
+    radial-gradient(2px 2px at 92% 20%, #fff 40%, transparent 50%),
+    radial-gradient(1px 1px at 5% 85%, #fff 40%, transparent 50%);
+  opacity: 0.8;
+  animation: twinkle 4s ease-in-out infinite;
+}
+
+@keyframes twinkle {
+  0%, 100% { opacity: 0.5; }
+  50% { opacity: 0.95; }
+}
+
+/* ---------- Retro menu (top-left icons) ---------- */
+.retro-menu-item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    width: 72px;
+    padding: 6px 4px;
+    border: 2px solid #1e293b;
+    border-radius: 12px;
+    box-shadow: 2px 2px 0 #1e293b;
+    text-decoration: none;
+    color: #1e293b;
+    font-weight: bold;
+    font-size: 9px;
+    letter-spacing: 0.5px;
+    transition: transform 0.1s ease, box-shadow 0.1s ease;
+  }
+  
+  @media (min-width: 768px) {
+    .retro-menu-item {
+      width: 88px;
+      padding: 8px 6px;
+      font-size: 10px;
+      box-shadow: 3px 3px 0 #1e293b;
+    }
+  }
+  
+  .retro-menu-item:hover {
+    transform: translate(-1px, -1px);
+    box-shadow: 4px 4px 0 #1e293b;
+  }
+  
+  .retro-menu-item:active {
+    transform: translate(2px, 2px);
+    box-shadow: 1px 1px 0 #1e293b;
+  }
+  
+  .retro-menu-item-active {
+    outline: 3px solid #fff;
+    outline-offset: -5px;
+    transform: translate(-1px, -1px);
+    box-shadow: 4px 4px 0 #1e293b;
+  }
+  
+  .retro-menu-emoji {
+    font-size: 22px;
+    line-height: 1;
+    margin-bottom: 2px;
+  }
+  
+  @media (min-width: 768px) {
+    .retro-menu-emoji {
+      font-size: 26px;
+      margin-bottom: 4px;
+    }
+  }
+  
+  .retro-menu-label {
+    font-size: 9px;
+    text-align: center;
+  }
+  
+  @media (min-width: 768px) {
+    .retro-menu-label {
+      font-size: 10px;
+    }
+  }
+/* ---------- Retro window ---------- */
+.retro-window {
+  background: #d9d4e8;
+  border: 3px solid #1e293b;
+  border-radius: 6px;
+  box-shadow: 6px 6px 0 rgba(30, 41, 59, 0.55);
+  overflow: hidden;
+}
+
+.retro-window-titlebar {
+  background: linear-gradient(90deg, #7c5cbf 0%, #9a7ee0 100%);
+  color: white;
+  padding: 6px 8px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 12px;
+  font-weight: bold;
+  border-bottom: 2px solid #1e293b;
+}
+
+.retro-window-dots {
+  display: flex;
+  gap: 4px;
+}
+
+.retro-dot {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  border: 1px solid #1e293b;
+}
+
+.retro-dot-red { background: #ff6b81; }
+.retro-dot-yellow { background: #ffd93d; }
+.retro-dot-green { background: #6bcf7f; }
+
+.retro-window-title {
+  flex: 1;
+  text-align: center;
+  letter-spacing: 0.5px;
+}
+
+.retro-window-controls {
+  display: flex;
+  gap: 3px;
+}
+
+.retro-ctrl-btn {
+  width: 20px;
+  height: 20px;
+  background: #e8e2f5;
+  border: 1px solid #1e293b;
+  border-radius: 3px;
+  font-size: 11px;
+  font-weight: bold;
+  color: #1e293b;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  line-height: 1;
+}
+
+.retro-ctrl-btn:hover {
+  background: white;
+}
+
+.retro-ctrl-close {
+  background: #ffb3b3;
+}
+
+.retro-menubar {
+  background: #f0ecfa;
+  border-bottom: 1px solid #b8aed0;
+  padding: 4px 12px;
+  display: flex;
+  gap: 16px;
+  font-size: 12px;
+  color: #1e293b;
+}
+
+.retro-menubar span {
+  cursor: default;
+}
+
+.retro-menubar span:hover {
+  text-decoration: underline;
+}
+
+.retro-window-content {
+  background: #fdfbff;
+  padding: 20px;
+  min-height: 60vh;
+  color: #1e293b;
+}
+
+.retro-statusbar {
+  background: #e8e2f5;
+  border-top: 1px solid #b8aed0;
+  padding: 4px 12px;
+  display: flex;
+  font-size: 11px;
+  color: #4b5563;
+  align-items: center;
+  gap: 12px;
+}
+
+/* ---------- Fake taskbar ---------- */
+.retro-taskbar {
+  background: linear-gradient(180deg, #c9c2dd 0%, #a89ad6 100%);
+  border-top: 2px solid #1e293b;
+  color: #1e293b;
+  font-family: "MS Sans Serif", "Tahoma", sans-serif;
+}
+
+.retro-start-btn {
+  background: #f0ecfa;
+  border: 1px solid #1e293b;
+  border-radius: 3px;
+  font-size: 11px;
+}
+
+.retro-start-btn:active {
+  transform: translateY(1px);
+}
+
+/* ---------- Retro nav pills (in window content) ---------- */
+.retro-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 4px 10px;
+  border: 1.5px solid #1e293b;
+  border-radius: 999px;
+  font-size: 11px;
+  font-weight: bold;
+  color: #1e293b;
+}
+
+/* ---------- Retro accordion ---------- */
+.retro-accordion {
+  background: #f8f5ff;
+  border: 2px solid #1e293b;
+  border-radius: 6px;
+  margin-bottom: 10px;
+  overflow: hidden;
+  box-shadow: 2px 2px 0 rgba(30, 41, 59, 0.25);
+}
+
+.retro-accordion-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 10px 14px;
+  background: #ece7f8;
+  cursor: pointer;
+  font-size: 13px;
+  font-weight: bold;
+  border: none;
+  width: 100%;
+  text-align: left;
+  color: #1e293b;
+}
+
+.retro-accordion-header:hover {
+  background: #e0d8f0;
+}
+
+.retro-accordion-open .retro-accordion-header {
+  background: linear-gradient(90deg, #b8a4e0 0%, #cdbdf0 100%);
+  color: white;
+}
+
+.retro-accordion-body {
+  padding: 14px;
+  background: #fdfbff;
+  border-top: 1px solid #d0c8e0;
+}
+
+/* ---------- Sliders ---------- */
+.retro-slider {
+  width: 100%;
+  accent-color: #7c5cbf;
+}
+
+/* ---------- Buttons ---------- */
+.retro-btn {
+  background: #cdbdf0;
+  border: 2px solid #1e293b;
+  border-radius: 4px;
+  padding: 6px 14px;
+  font-weight: bold;
+  font-size: 12px;
+  color: #1e293b;
+  cursor: pointer;
+  box-shadow: 2px 2px 0 #1e293b;
+  transition: all 0.05s ease;
+}
+
+.retro-btn:hover {
+  background: #b8a4e0;
+}
+
+.retro-btn:active {
+  transform: translate(2px, 2px);
+  box-shadow: 0 0 0 #1e293b;
+}
+
+.retro-btn-primary {
+  background: #7c5cbf;
+  color: white;
+}
+
+.retro-btn-primary:hover {
+  background: #6a4caf;
+}
+
+/* ---------- Headings inside windows ---------- */
+.retro-h1 {
+  font-size: 22px;
+  font-weight: bold;
+  color: #7c5cbf;
+  border-bottom: 2px dotted #b8a4e0;
+  padding-bottom: 6px;
+  margin-bottom: 14px;
+}
+
+.retro-h2 {
+  font-size: 16px;
+  font-weight: bold;
+  color: #4b3d7a;
+  margin-top: 18px;
+  margin-bottom: 10px;
+}
+
+/* ---------- Scrollbar (webkit) ---------- */
+.retro-window-content::-webkit-scrollbar {
+  width: 10px;
+}
+
+.retro-window-content::-webkit-scrollbar-track {
+  background: #ece7f8;
+}
+
+.retro-window-content::-webkit-scrollbar-thumb {
+  background: #b8a4e0;
+  border-radius: 5px;
+  border: 2px solid #ece7f8;
+}
+@keyframes popIn {
+    from {
+      opacity: 0;
+      transform: scale(0.9);
+    }
+    to {
+      opacity: 1;
+      transform: scale(1);
+    }
+  }
+  /* ---------- Retro toast notifications ---------- */
+.retro-toast-container {
+    z-index: 9999;
+  }
+  
+  .retro-toast {
+    background: #fdfbff !important;
+    border: 2px solid #1e293b !important;
+    border-radius: 8px !important;
+    box-shadow: 3px 3px 0 #7c5cbf !important;
+    color: #1e293b !important;
+    font-family: "MS Sans Serif", "Tahoma", sans-serif !important;
+    font-weight: bold !important;
+    font-size: 13px !important;
+    padding: 10px 14px !important;
+    min-height: auto !important;
+  }
+  
+  .retro-toast::before {
+    color: #7c5cbf;
+  }
+  
+  /* Success and error just change border color, not background */
+  .Toastify__toast--success.retro-toast {
+    border-left: 6px solid #6bcf7f !important;
+  }
+  
+  .Toastify__toast--error.retro-toast {
+    border-left: 6px solid #e85d5d !important;
+  }
+  
+  .Toastify__toast--info.retro-toast {
+    border-left: 6px solid #67c6c3 !important;
+  }
+  
+  .Toastify__toast--warning.retro-toast {
+    border-left: 6px solid #f4c95d !important;
+  }
+  
+  .retro-toast-progress {
+    background: #7c5cbf !important;
+  }
+  
+  .Toastify__close-button {
+    color: #7c5cbf !important;
+    opacity: 0.8 !important;
+  }
+  
+  .Toastify__close-button:hover {
+    opacity: 1 !important;
+  }

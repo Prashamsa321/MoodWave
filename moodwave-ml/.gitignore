@@ -1,0 +1,24 @@
+.venv/
+__pycache__/
+*.py[cod]
+.ipynb_checkpoints/
+.pytest_cache/
+.DS_Store
+
+# The real country file is large; keep raw datasets outside Git history.
+data/raw/*.csv
+
+# Generated data products are reproducible from raw sources.
+data/interim/*.parquet
+data/interim/*.csv.gz
+data/processed/*.parquet
+data/processed/*.csv.gz
+
+# Later generated model/dashboard artifacts.
+models/*.joblib
+artifacts/dashboard/*.parquet
+artifacts/dashboard/*.csv.gz
+
+scripts/
+tests/
+.virtual_documents/
