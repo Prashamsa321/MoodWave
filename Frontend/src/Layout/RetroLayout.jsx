@@ -98,7 +98,7 @@ export default function RetroLayout() {
     <div className="min-h-screen w-full relative retro-bg retro-desktop-shell">
       <RetroMenu />
 
-      <main className="retro-desktop-main pt-32 md:pt-8 px-4 md:pl-40 md:pr-8 pb-20 max-w-6xl mx-auto md:mx-auto">
+      <main className="retro-desktop-main">
         <Outlet />
       </main>
 
