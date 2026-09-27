@@ -1,7 +1,7 @@
 {
     "model_name": "mood_classifier",
     "model_version": "1.0.0",
-    "trained_at": "2026-09-23T23:49:37",
+    "trained_at": "2026-09-27T12:22:18",
     "target": "mood_label",
     "features": [
         "danceability",
@@ -24,10 +24,10 @@
         "min_samples_leaf": 15
     },
     "metrics": {
-        "accuracy": 0.6521254665998105,
-        "macro_precision": 0.6194731592334108,
-        "macro_recall": 0.5979868230716957,
-        "macro_f1": 0.6057672794806078
+        "accuracy": 0.6512897654465429,
+        "macro_precision": 0.6186027118116519,
+        "macro_recall": 0.5972767549914272,
+        "macro_f1": 0.6049716322004334
     },
-    "sklearn_version": "1.9.1"
+    "sklearn_version": "1.7.2"
 }

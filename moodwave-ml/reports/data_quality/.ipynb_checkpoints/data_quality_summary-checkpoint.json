@@ -1,0 +1,26 @@
+{
+    "historical": {
+        "raw_rows": 2400,
+        "clean_rows": 2400,
+        "year_min": 2000,
+        "year_max": 2023,
+        "duplicates_removed": 0
+    },
+    "genre": {
+        "raw_rows": 114000,
+        "clean_rows": 113550,
+        "genre_count": 114,
+        "duplicates_removed": 450,
+        "repairs": {
+            "trailing_empty_values": 47747,
+            "split_title": 1,
+            "quarantined": 0
+        }
+    },
+    "country": {
+        "raw_rows": 2110316,
+        "clean_rows": 2110316,
+        "global_rows": 28908,
+        "duplicates_removed": 0
+    }
+}

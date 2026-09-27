@@ -1,7 +1,7 @@
 {
     "model_name": "popularity_regression",
     "model_version": "1.0.0",
-    "trained_at": "2026-09-23T23:49:37",
+    "trained_at": "2026-09-27T12:22:18",
     "target": "popularity",
     "features": [
         "danceability",
@@ -23,9 +23,9 @@
     "random_state": 42,
     "metrics": {
         "mae": 9.085448047200211,
-        "mse": 211.0004313561596,
+        "mse": 211.00043135615957,
         "rmse": 14.525853894217702,
-        "r2": -0.014137182604360365
+        "r2": -0.014137182604360143
     },
-    "sklearn_version": "1.9.1"
+    "sklearn_version": "1.7.2"
 }

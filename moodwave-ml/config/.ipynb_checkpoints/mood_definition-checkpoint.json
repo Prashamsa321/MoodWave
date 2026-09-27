@@ -1,0 +1,16 @@
+{
+    "valence_threshold": 0.5,
+    "energy_threshold": 0.5,
+    "moods": {
+        "Euphoric": "high valence + high energy",
+        "Peaceful": "high valence + low energy",
+        "Aggressive": "low valence + high energy",
+        "Melancholic": "low valence + low energy"
+    },
+    "colors": {
+        "Euphoric": "#F4C95D",
+        "Peaceful": "#67C6C3",
+        "Aggressive": "#E85D5D",
+        "Melancholic": "#6C70B5"
+    }
+}

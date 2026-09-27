@@ -1,7 +1,7 @@
 {
   "model_name": "similar_songs_nn",
   "model_version": "1.0.0",
-  "trained_at": "2026-09-23T23:50:33",
+  "trained_at": "2026-09-27T12:22:51",
   "features": [
     "danceability",
     "energy",
@@ -17,5 +17,5 @@
   "training_rows": 115657,
   "metric": "euclidean",
   "default_neighbors": 5,
-  "sklearn_version": "1.9.1"
+  "sklearn_version": "1.7.2"
 }

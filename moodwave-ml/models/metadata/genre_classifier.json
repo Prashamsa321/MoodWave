@@ -1,7 +1,7 @@
 {
     "model_name": "genre_classifier",
     "model_version": "1.0.0",
-    "trained_at": "2026-09-23T23:49:37",
+    "trained_at": "2026-09-27T12:22:18",
     "target": "track_genre",
     "features": [
         "danceability",
@@ -28,10 +28,10 @@
         "min_samples_leaf": 2
     },
     "metrics": {
-        "accuracy": 0.34406698890326093,
-        "macro_f1": 0.2942505445626037,
-        "weighted_f1": 0.32153079255297384,
-        "top_3_accuracy": 0.5278099257948125
+        "accuracy": 0.3447477704404657,
+        "macro_f1": 0.2965337381208375,
+        "weighted_f1": 0.32280597099323255,
+        "top_3_accuracy": 0.5290353325617809
     },
-    "sklearn_version": "1.9.1"
+    "sklearn_version": "1.7.2"
 }

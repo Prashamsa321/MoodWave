@@ -1,15 +1,16 @@
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { Link } from "react-router-dom";
 import RetroWindow from "../components/RetroWindow";
+import Win98Icon from "../components/Win98Icon";
 import api from "../services/api";
 
 const MODEL_META = {
-  mood: { icon: "🎭", label: "Mood Classifier", color: "#7c5cbf" },
-  genre: { icon: "🎸", label: "Genre Classifier", color: "#e85d5d" },
-  popularity: { icon: "📈", label: "Popularity Predictor", color: "#22c55e" },
-  cluster: { icon: "🔵", label: "Emotion Grouping", color: "#3b82f6" },
-  pca: { icon: "📉", label: "Emotion Map", color: "#f59e0b" },
-  similar: { icon: "🎧", label: "Similar Songs", color: "#67c6c3" },
+  mood: { label: "Mood Classifier" },
+  genre: { label: "Genre Classifier" },
+  popularity: { label: "Popularity Predictor" },
+  cluster: { label: "Emotion Grouping" },
+  pca: { label: "Emotion Map" },
+  similar: { label: "Similar Songs" },
 };
 
 export default function History() {
@@ -31,16 +32,22 @@ export default function History() {
     })();
   }, []);
 
-  const filtered =
-    filter === "all"
-      ? predictions
-      : predictions.filter((p) => p.modelType === filter);
+  const filtered = useMemo(
+    () => filter === "all" ? predictions : predictions.filter((p) => p.modelType === filter),
+    [filter, predictions],
+  );
+
+  const availableModels = useMemo(
+    () => Object.entries(MODEL_META).filter(([key]) => predictions.some((p) => p.modelType === key)),
+    [predictions],
+  );
 
   const formatDate = (iso) => {
     const d = new Date(iso);
     return d.toLocaleString("en-US", {
       month: "short",
       day: "numeric",
+      year: "numeric",
       hour: "numeric",
       minute: "2-digit",
     });
@@ -55,7 +62,7 @@ export default function History() {
           : "Mood predicted";
       case "genre":
         return out.top_genres?.[0]
-          ? `Top: ${out.top_genres[0].genre} (${(out.top_genres[0].probability * 100).toFixed(1)}%)`
+          ? `${out.top_genres[0].genre} (${(out.top_genres[0].probability * 100).toFixed(1)}%)`
           : "Genre predicted";
       case "popularity":
         return `Score: ${out.popularity ?? "?"}/100`;
@@ -75,126 +82,70 @@ export default function History() {
   };
 
   return (
-    <RetroWindow title="MY HISTORY">
-          <div className="max-w-4xl mx-auto">
-
-      <h1 className="retro-h1">📜 My Prediction History</h1>
-      <p className="text-sm text-purple-700 mb-4">
-        {predictions.length === 0
-          ? "You haven't made any predictions yet."
-          : `You have ${predictions.length} saved prediction${
-              predictions.length !== 1 ? "s" : ""
-            }.`}
-      </p>
-
-      {/* Filter row */}
-      {predictions.length > 0 && (
-        <div className="flex flex-wrap gap-2 mb-6">
-          <button
-            onClick={() => setFilter("all")}
-            className="retro-pill"
-            style={{
-              background: filter === "all" ? "#7c5cbf" : "#e0d8f0",
-              color: filter === "all" ? "#fff" : "#1e293b",
-            }}
-          >
-            All ({predictions.length})
-          </button>
-          {Object.entries(MODEL_META).map(([key, meta]) => {
-            const count = predictions.filter((p) => p.modelType === key).length;
-            if (count === 0) return null;
-            return (
-              <button
-                key={key}
-                onClick={() => setFilter(key)}
-                className="retro-pill"
-                style={{
-                  background: filter === key ? meta.color : "#e0d8f0",
-                  color: filter === key ? "#fff" : "#1e293b",
-                }}
-              >
-                {meta.icon} {count}
-              </button>
-            );
-          })}
+    <RetroWindow title="Prediction History" appIcon="H" statusText={`${filtered.length} item${filtered.length === 1 ? "" : "s"}`}>
+      <div className="win98-app-page win98-history-page">
+        <div className="win98-history-toolbar">
+          <span>Show:</span>
+          <select className="win98-select" value={filter} onChange={(e) => setFilter(e.target.value)}>
+            <option value="all">All models ({predictions.length})</option>
+            {availableModels.map(([key, meta]) => (
+              <option key={key} value={key}>{meta.label}</option>
+            ))}
+          </select>
+          <span className="win98-toolbar-spacer" />
+          <span>{predictions.length} saved prediction{predictions.length === 1 ? "" : "s"}</span>
         </div>
-      )}
 
-      {/* Loading */}
-      {loading && (
-        <div className="text-center py-8 text-purple-700 text-sm">
-          ⏳ Loading history...
-        </div>
-      )}
+        {loading && (
+          <div className="win98-message-box">
+            <span className="win98-message-icon">i</span>
+            <span>Loading prediction history...</span>
+          </div>
+        )}
 
-      {/* Error */}
-      {error && (
-        <div className="bg-red-100 border-2 border-red-700 rounded p-4 text-red-900 text-sm">
-          Error: {error}
-        </div>
-      )}
+        {error && (
+          <div className="win98-message-box is-error">
+            <span className="win98-message-icon">!</span>
+            <span>Error: {error}</span>
+          </div>
+        )}
 
-      {/* Empty state */}
-      {!loading && !error && predictions.length === 0 && (
-        <div className="bg-white border-2 border-dashed border-purple-400 rounded-lg p-8 text-center">
-          <div className="text-5xl mb-3">📭</div>
-          <p className="text-sm text-slate-700 mb-4">
-            No predictions yet.
-          </p>
-          <Link
-            to="/models"
-            className="retro-btn retro-btn-primary px-5 py-2 text-sm"
-          >
-            Go to Models →
-          </Link>
-        </div>
-      )}
+        {!loading && !error && predictions.length === 0 && (
+          <div className="win98-history-empty">
+            <Win98Icon type="history" size={48} />
+            <p>No predictions have been saved yet.</p>
+            <Link to="/models" className="retro-btn win98-default-button">Open Models...</Link>
+          </div>
+        )}
 
-      {/* Predictions list */}
-      {!loading && !error && filtered.length > 0 && (
-        <div className="space-y-3">
-          {filtered.map((pred) => {
-            const meta = MODEL_META[pred.modelType] || {
-              icon: "🔮",
-              label: pred.modelType,
-              color: "#7c5cbf",
-            };
-            return (
-              <div
-                key={pred._id}
-                className="bg-white border-2 border-slate-900 rounded-lg p-4"
-              >
-                <div className="flex items-start gap-3">
-                  <div
-                    className="w-10 h-10 rounded-full flex items-center justify-center text-lg shrink-0"
-                    style={{ background: meta.color, color: "#fff" }}
-                  >
-                    {meta.icon}
-                  </div>
-                  <div className="flex-1 min-w-0">
-                    <div className="flex items-center justify-between gap-2 flex-wrap">
-                      <div className="font-bold text-sm text-purple-700">
-                        {meta.label}
-                      </div>
-                      <div className="text-[10px] text-slate-500">
-                        {formatDate(pred.createdAt)}
-                      </div>
-                    </div>
-                    <div className="text-xs text-slate-700 mt-1">
-                      {summarize(pred)}
-                    </div>
-                  </div>
-                </div>
-              </div>
-            );
-          })}
-        </div>
-      )}
-
-      <div className="mt-8 text-center text-xs text-purple-700">
-        End of History 
+        {!loading && !error && predictions.length > 0 && (
+          <div className="win98-listview-frame">
+            <table className="win98-listview-table">
+              <thead>
+                <tr>
+                  <th>Model</th>
+                  <th>Result</th>
+                  <th>Date modified</th>
+                </tr>
+              </thead>
+              <tbody>
+                {filtered.map((pred) => (
+                  <tr key={pred._id}>
+                    <td>
+                      <span className="win98-history-model-cell">
+                        <Win98Icon type="models" size={18} />
+                        {MODEL_META[pred.modelType]?.label || pred.modelType}
+                      </span>
+                    </td>
+                    <td>{summarize(pred)}</td>
+                    <td>{formatDate(pred.createdAt)}</td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        )}
       </div>
-    </div>
     </RetroWindow>
   );
 }

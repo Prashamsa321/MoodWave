@@ -6,7 +6,10 @@ export default function ProtectedRoute({ children }) {
 
   if (loading) {
     return (
-      <div className="text-center py-8 text-purple-700">Loading...</div>
+      <div className="win98-message-box">
+        <span className="win98-message-icon">i</span>
+        <span>Loading user session...</span>
+      </div>
     );
   }
 

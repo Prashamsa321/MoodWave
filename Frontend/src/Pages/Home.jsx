@@ -1,54 +1,86 @@
+import { useNavigate } from "react-router-dom";
 import RetroWindow from "../components/RetroWindow";
+import Win98Icon from "../components/Win98Icon";
+import { useAuth } from "../context/AuthContext";
 
 export default function Home() {
+  const navigate = useNavigate();
+  const { isAuthenticated } = useAuth();
+  const openProtected = (path) => navigate(isAuthenticated ? path : "/login");
+
   return (
-    <RetroWindow title="HOME">
-      <h1 className="retro-h1">✧ Welcome to MoodWave ✧</h1>
-
-      <div className="flex items-start gap-6 flex-wrap">
-        <div
-          className="w-40 h-40 shrink-0 border-4 border-slate-900 rounded-lg flex items-center justify-center text-6xl"
-          style={{ background: "linear-gradient(135deg, #cdbdf0, #f8c8dc)" }}
-        >
-          🎵
-        </div>
-
-        <div className="flex-1 min-w-[260px]">
-          <p className="mb-3 text-sm leading-relaxed">
-            Hi! This is <strong>MoodWave</strong> — a music emotion
-            exploration project.
-          </p>
-          <p className="mb-3 text-sm leading-relaxed">
-            We trained <strong>6 machine learning models</strong> on a
-            dataset of <strong>115,000+ songs</strong> to understand how
-            music makes us feel.
-          </p>
-          <p className="mb-3 text-sm leading-relaxed">
-            Drag a mood slider on the Models page → get 10 songs that match.
-            Browse our Findings to see what the data revealed.
-          </p>
-
-          <div className="flex flex-wrap gap-2 mt-4">
-            <span className="retro-pill bg-pink-300">🎧 115K songs</span>
-            <span className="retro-pill bg-teal-200">🧠 6 ML models</span>
-            <span className="retro-pill bg-yellow-200">📊 10 finding themes</span>
+    <RetroWindow title="MoodWave - Home" appIcon="♪" statusText="Ready">
+      <div className="win98-app-page">
+        <div className="win98-page-toolbar">
+          <button type="button" className="retro-btn" onClick={() => navigate("/")}>Desktop</button>
+          <button type="button" className="retro-btn" onClick={() => openProtected("/findings")}>Reports</button>
+          <button type="button" className="retro-btn" onClick={() => openProtected("/models")}>Models</button>
+          <div className="win98-toolbar-address">
+            <span>Address</span>
+            <div className="win98-address-box">MoodWave\Home</div>
           </div>
         </div>
-      </div>
 
-      <div className="mt-8 border-t-2 border-dotted border-purple-300 pt-6">
-        <h2 className="retro-h2">✧ Quick Start</h2>
-        <ol className="text-sm space-y-2 list-decimal list-inside">
-          <li>Click <strong>MODELS</strong> in the top-left menu</li>
-          <li>Expand <strong>Similar Songs NN</strong></li>
-          <li>Drag the Energy + Valence sliders</li>
-          <li>Click <strong>Recommend Songs</strong> → 10 matching tracks appear</li>
-        </ol>
-      </div>
+        <div className="win98-home-banner">
+          <div className="win98-home-logo" aria-hidden="true">♪</div>
+          <div>
+            <h1>MoodWave</h1>
+            <p>Music Emotion Analysis &amp; Machine Learning Explorer</p>
+          </div>
+        </div>
 
-      <div className="mt-8 text-center text-xs text-purple-700">
-        ✦ ✦ ✦ thanks for visiting ✦ ✦ ✦
+        <div className="win98-home-grid">
+          <fieldset className="win98-groupbox">
+            <legend>Welcome</legend>
+            <div className="win98-info-row">
+              <Win98Icon type="computer" size={42} />
+              <div>
+                <strong>Welcome to MoodWave.</strong>
+                <p>
+                  This project explores how measurable audio features relate to mood,
+                  genre, popularity and similarity across a large Spotify song dataset.
+                </p>
+              </div>
+            </div>
+            <div className="win98-rule" />
+            <p>
+              Six machine-learning workflows are available from the Models application.
+              The Reports application contains the generated figures and written findings.
+            </p>
+          </fieldset>
+
+          <fieldset className="win98-groupbox">
+            <legend>Project information</legend>
+            <div className="win98-properties-box">
+              <Property label="Songs" value="115,000+" />
+              <Property label="ML models" value="6" />
+              <Property label="Report groups" value="9" />
+              <Property label="Interface" value="Windows 98" />
+            </div>
+          </fieldset>
+        </div>
+
+        <fieldset className="win98-groupbox win98-quick-start">
+          <legend>Quick start</legend>
+          <div className="win98-quick-step"><span>1</span><p>Open <b>MODELS</b> from the desktop or Start menu.</p></div>
+          <div className="win98-quick-step"><span>2</span><p>Select one of the six models from the application menu bar.</p></div>
+          <div className="win98-quick-step"><span>3</span><p>Adjust the classic trackbar controls and run the model.</p></div>
+          <div className="win98-quick-step"><span>4</span><p>Open <b>REPORTS</b> to inspect the figures and analysis produced by the project.</p></div>
+          <div className="win98-action-row">
+            <button type="button" className="retro-btn" onClick={() => navigate("/about")}>About...</button>
+            <button type="button" className="retro-btn win98-default-button" onClick={() => openProtected("/models")}>Open Models</button>
+          </div>
+        </fieldset>
       </div>
     </RetroWindow>
+  );
+}
+
+function Property({ label, value }) {
+  return (
+    <div className="win98-property-row">
+      <span>{label}</span>
+      <strong>{value}</strong>
+    </div>
   );
 }

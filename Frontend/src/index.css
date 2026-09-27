@@ -426,3 +426,2461 @@ html, body, #root {
   .Toastify__close-button:hover {
     opacity: 1 !important;
   }
+/* ========================================================================== */
+/* Windows 98 shell + Report application                                      */
+/* ========================================================================== */
+
+:root {
+  --win98-desktop: #008080;
+  --win98-silver: #c0c0c0;
+  --win98-light: #ffffff;
+  --win98-mid-light: #dfdfdf;
+  --win98-mid-dark: #808080;
+  --win98-dark: #000000;
+  --win98-title: #000080;
+  --win98-title-end: #1084d0;
+  --win98-selection: #000080;
+  --win98-font: "MS Sans Serif", Tahoma, Geneva, sans-serif;
+}
+
+html,
+body,
+#root {
+  min-height: 100%;
+  background: var(--win98-desktop);
+  font-family: var(--win98-font);
+  color: #000;
+}
+
+.retro-ui {
+  font-family: var(--win98-font) !important;
+  border-radius: 0 !important;
+}
+
+.retro-bg {
+  background: var(--win98-desktop) !important;
+  background-attachment: fixed;
+}
+
+.sparkles-layer {
+  display: none !important;
+}
+
+/* Classic desktop icon treatment for the existing navigation while the icon
+   artwork itself remains available for the dedicated desktop pass. */
+.retro-menu-item,
+.retro-menu-item:hover,
+.retro-menu-item:active,
+.retro-menu-item-active {
+  width: 84px;
+  min-height: 64px;
+  padding: 4px 3px;
+  border: 1px solid transparent;
+  border-radius: 0;
+  background: transparent !important;
+  box-shadow: none;
+  color: #fff;
+  transform: none;
+  text-shadow: 1px 1px #000;
+}
+
+.retro-menu-item:hover,
+.retro-menu-item-active {
+  background: rgba(0, 0, 128, 0.35) !important;
+  border: 1px dotted #fff;
+  outline: none;
+}
+
+.retro-menu-emoji {
+  font-size: 30px;
+  line-height: 34px;
+  margin: 0 0 2px;
+  filter: saturate(0.9);
+}
+
+.retro-menu-label {
+  padding: 1px 3px;
+  font-size: 11px;
+  line-height: 13px;
+  font-weight: 400;
+  letter-spacing: 0;
+  color: #fff;
+}
+
+/* Main application window: square corners, hard bevel, Win98 title blue. */
+.retro-window {
+  position: relative;
+  width: min(1120px, calc(100vw - 32px));
+  margin: 0 auto;
+  background: var(--win98-silver);
+  border: 2px solid;
+  border-color: var(--win98-light) var(--win98-dark) var(--win98-dark) var(--win98-light);
+  border-radius: 0;
+  box-shadow: 1px 1px 0 var(--win98-mid-dark), -1px -1px 0 var(--win98-mid-light);
+  overflow: visible;
+}
+
+.retro-window::after {
+  content: "";
+  position: absolute;
+  inset: 2px;
+  pointer-events: none;
+  border: 1px solid;
+  border-color: var(--win98-mid-light) var(--win98-mid-dark) var(--win98-mid-dark)
+    var(--win98-mid-light);
+}
+
+.retro-window-maximized {
+  position: fixed;
+  z-index: 80;
+  inset: 0 0 30px 0;
+  width: auto;
+  margin: 0;
+}
+
+.retro-window-titlebar {
+  position: relative;
+  z-index: 2;
+  height: 22px;
+  margin: 2px 2px 0;
+  padding: 2px 2px 2px 3px;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  background: linear-gradient(90deg, var(--win98-title) 0%, var(--win98-title-end) 100%);
+  color: #fff;
+  border: 0;
+  font-size: 12px;
+  font-weight: 700;
+  line-height: 18px;
+  user-select: none;
+}
+
+.retro-window-app-icon {
+  width: 16px;
+  height: 16px;
+  display: grid;
+  place-items: center;
+  flex: 0 0 16px;
+  background: #fff;
+  border: 1px solid #000;
+  color: #000080;
+  font-family: "Times New Roman", serif;
+  font-size: 12px;
+  font-weight: 700;
+  line-height: 1;
+}
+
+.retro-window-title {
+  flex: 1;
+  min-width: 0;
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  text-align: left;
+  letter-spacing: 0;
+}
+
+.retro-window-controls {
+  display: flex;
+  gap: 2px;
+  flex: 0 0 auto;
+}
+
+.retro-window .retro-ctrl-btn.retro-ui,
+.retro-ctrl-btn {
+  position: relative;
+  width: 16px !important;
+  min-width: 16px !important;
+  height: 14px !important;
+  min-height: 14px !important;
+  margin: 0 !important;
+  padding: 0 !important;
+  display: grid !important;
+  place-items: center !important;
+  background: var(--win98-silver) !important;
+  color: #000 !important;
+  border: 1px solid !important;
+  border-color: var(--win98-light) var(--win98-dark) var(--win98-dark) var(--win98-light) !important;
+  border-radius: 0 !important;
+  box-shadow: inset 1px 1px 0 var(--win98-mid-light), inset -1px -1px 0 var(--win98-mid-dark) !important;
+  line-height: 1 !important;
+}
+
+.retro-window .retro-ctrl-btn.retro-ui:active,
+.retro-ctrl-btn:active {
+  border-color: var(--win98-dark) var(--win98-light) var(--win98-light) var(--win98-dark) !important;
+  box-shadow: inset 1px 1px 0 var(--win98-mid-dark) !important;
+}
+
+.win98-control-glyph {
+  position: relative;
+  display: block;
+  width: 9px;
+  height: 9px;
+}
+
+.minimize-glyph::after {
+  content: "";
+  position: absolute;
+  left: 1px;
+  bottom: 1px;
+  width: 6px;
+  height: 2px;
+  background: #000;
+}
+
+.maximize-glyph {
+  border: 1px solid #000;
+  border-top-width: 2px;
+}
+
+.restore-glyph::before,
+.restore-glyph::after {
+  content: "";
+  position: absolute;
+  width: 6px;
+  height: 6px;
+  border: 1px solid #000;
+  border-top-width: 2px;
+  background: var(--win98-silver);
+}
+
+.restore-glyph::before {
+  top: 0;
+  right: 0;
+}
+
+.restore-glyph::after {
+  left: 0;
+  bottom: 0;
+}
+
+.close-glyph::before,
+.close-glyph::after {
+  content: "";
+  position: absolute;
+  left: 4px;
+  top: 0;
+  width: 2px;
+  height: 10px;
+  background: #000;
+}
+
+.close-glyph::before {
+  transform: rotate(45deg);
+}
+
+.close-glyph::after {
+  transform: rotate(-45deg);
+}
+
+.retro-window-minimized {
+  width: min(520px, calc(100vw - 32px));
+}
+
+.retro-menubar {
+  position: relative;
+  z-index: 4;
+  min-height: 24px;
+  margin: 0 2px;
+  padding: 1px 4px;
+  display: flex;
+  align-items: flex-start;
+  gap: 0;
+  background: var(--win98-silver);
+  border: 0;
+  border-bottom: 1px solid var(--win98-mid-dark);
+  color: #000;
+  font-size: 12px;
+  line-height: 20px;
+}
+
+.retro-menubar > span {
+  padding: 1px 8px;
+}
+
+.retro-menubar > span:hover {
+  background: var(--win98-selection);
+  color: #fff;
+  text-decoration: none;
+}
+
+.retro-window-content {
+  position: relative;
+  z-index: 1;
+  min-height: 62vh;
+  margin: 0 2px;
+  padding: 0;
+  background: var(--win98-silver);
+  color: #000;
+  overflow: auto;
+}
+
+.retro-statusbar {
+  position: relative;
+  z-index: 2;
+  min-height: 22px;
+  margin: 2px;
+  padding: 0;
+  display: flex;
+  align-items: stretch;
+  gap: 2px;
+  background: var(--win98-silver);
+  border: 0;
+  color: #000;
+  font-size: 11px;
+}
+
+.retro-status-panel {
+  min-height: 20px;
+  padding: 2px 6px;
+  display: flex;
+  align-items: center;
+  flex: 1;
+  border: 1px solid;
+  border-color: var(--win98-mid-dark) var(--win98-light) var(--win98-light)
+    var(--win98-mid-dark);
+}
+
+.retro-status-grip {
+  flex: 0 0 18px;
+  padding: 0;
+  background:
+    linear-gradient(135deg, transparent 0 45%, #808080 45% 52%, transparent 52% 60%, #808080 60% 67%, transparent 67% 75%, #808080 75% 82%, transparent 82%);
+}
+
+/* Win98 taskbar */
+.retro-taskbar {
+  height: 30px !important;
+  padding: 2px 3px !important;
+  background: var(--win98-silver) !important;
+  border-top: 2px solid var(--win98-light) !important;
+  color: #000 !important;
+  font-family: var(--win98-font) !important;
+  font-size: 11px !important;
+}
+
+.retro-start-btn {
+  height: 24px;
+  padding: 1px 6px !important;
+  background: var(--win98-silver) !important;
+  border: 2px solid !important;
+  border-color: var(--win98-light) var(--win98-dark) var(--win98-dark) var(--win98-light) !important;
+  border-radius: 0 !important;
+  box-shadow: none !important;
+  color: #000 !important;
+  font-size: 11px !important;
+}
+
+.retro-start-btn:active {
+  border-color: var(--win98-dark) var(--win98-light) var(--win98-light) var(--win98-dark) !important;
+  transform: none;
+}
+
+/* File menu: only File is exposed for the Reports application. */
+.win98-file-menu {
+  position: relative;
+  height: 22px;
+}
+
+.win98-file-trigger.retro-ui {
+  font-family: var(--win98-font) !important;
+  border-radius: 0 !important;
+  box-shadow: none !important;
+}
+
+.win98-file-trigger.retro-ui:hover {
+  background: #000080 !important;
+  color: #fff !important;
+}
+
+.win98-menu-access-key {
+  text-decoration: underline;
+}
+
+.win98-file-dropdown {
+  position: absolute;
+  z-index: 100;
+  top: 21px;
+  left: -3px;
+  width: 220px;
+  padding: 2px;
+  background: var(--win98-silver);
+  border: 2px solid;
+  border-color: var(--win98-light) var(--win98-dark) var(--win98-dark) var(--win98-light);
+  box-shadow: 1px 1px 0 #000;
+}
+
+.win98-file-item {
+  width: 100%;
+  min-height: 24px;
+  padding: 3px 10px 3px 6px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  border: 0;
+  background: transparent;
+  color: #000;
+  font: 12px/18px var(--win98-font);
+  text-align: left;
+  cursor: default;
+}
+
+.win98-file-item:hover,
+.win98-file-item:focus,
+.win98-file-item.is-active {
+  outline: 0;
+  background: var(--win98-selection);
+  color: #fff;
+}
+
+.win98-file-item-icon {
+  width: 16px;
+  flex: 0 0 16px;
+  font-family: "Courier New", monospace;
+  font-size: 15px;
+  line-height: 16px;
+  text-align: center;
+}
+
+/* Word 97/98 inspired document workspace */
+.report-editor-shell {
+  min-height: 65vh;
+  background: var(--win98-silver);
+  border-top: 1px solid var(--win98-light);
+}
+
+.report-ruler {
+  height: 22px;
+  margin: 2px 18px 0 24px;
+  padding: 2px 4px 0;
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  background:
+    repeating-linear-gradient(
+      to right,
+      #000 0,
+      #000 1px,
+      transparent 1px,
+      transparent calc(100% / 56)
+    ),
+    #fff;
+  border: 1px solid;
+  border-color: var(--win98-mid-dark) var(--win98-light) var(--win98-light)
+    var(--win98-mid-dark);
+  color: #000;
+  font: 9px/14px "Times New Roman", serif;
+}
+
+.report-ruler span {
+  text-align: center;
+  background: rgba(255, 255, 255, 0.88);
+}
+
+.report-workspace {
+  min-height: 650px;
+  padding: 18px 24px 40px;
+  background: #808080;
+  border: 2px solid;
+  border-color: #404040 #dfdfdf #dfdfdf #404040;
+  overflow: auto;
+}
+
+.report-paper.retro-ui,
+.report-paper {
+  width: min(816px, 100%);
+  min-height: 1056px;
+  margin: 0 auto;
+  padding: 70px 76px 84px;
+  background: #fff !important;
+  color: #000;
+  border: 1px solid #000;
+  border-radius: 0 !important;
+  box-shadow: 4px 4px 0 rgba(0, 0, 0, 0.35) !important;
+  font-family: "Times New Roman", Times, serif !important;
+}
+
+.report-paper.is-empty {
+  color: transparent;
+}
+
+.report-document {
+  font-family: "Times New Roman", Times, serif;
+  font-size: 12pt;
+  line-height: 1.45;
+}
+
+.report-document-header {
+  margin-bottom: 26px;
+  text-align: center;
+}
+
+.report-document h1 {
+  margin: 0 0 8px;
+  font-size: 20pt;
+  line-height: 1.15;
+  font-weight: 700;
+}
+
+.report-document-subtitle {
+  margin: 0;
+  font-size: 11pt;
+  font-style: italic;
+}
+
+.report-document-section,
+.report-figure-section {
+  margin-top: 28px;
+}
+
+.report-document h2 {
+  margin: 0 0 10px;
+  font-size: 14pt;
+  line-height: 1.2;
+  font-weight: 700;
+}
+
+.report-document h3 {
+  margin: 14px 0 5px;
+  font-size: 12pt;
+  line-height: 1.2;
+  font-weight: 700;
+}
+
+.report-document p {
+  margin: 0 0 12px;
+  text-align: justify;
+}
+
+.report-figure-section {
+  break-inside: avoid;
+}
+
+.report-figure-section figure {
+  margin: 14px 0 12px;
+}
+
+.report-image-frame {
+  width: 100%;
+  padding: 8px;
+  display: flex;
+  justify-content: center;
+  background: #fff;
+  border: 1px solid #777;
+}
+
+.report-image-frame img {
+  display: block;
+  width: auto;
+  max-width: 100%;
+  max-height: 520px;
+  object-fit: contain;
+}
+
+.report-figure-section figcaption {
+  margin-top: 6px;
+  font-size: 10.5pt;
+  text-align: center;
+  font-style: italic;
+}
+
+/* Square classic scrollbar styling where supported. */
+.retro-window-content,
+.report-workspace {
+  scrollbar-color: #c0c0c0 #dfdfdf;
+  scrollbar-width: auto;
+}
+
+.retro-window-content::-webkit-scrollbar,
+.report-workspace::-webkit-scrollbar {
+  width: 16px;
+  height: 16px;
+}
+
+.retro-window-content::-webkit-scrollbar-track,
+.report-workspace::-webkit-scrollbar-track {
+  background: #dfdfdf;
+  border-left: 1px solid #808080;
+}
+
+.retro-window-content::-webkit-scrollbar-thumb,
+.report-workspace::-webkit-scrollbar-thumb {
+  background: #c0c0c0;
+  border: 2px solid;
+  border-color: #fff #000 #000 #fff;
+  border-radius: 0;
+}
+
+@media (max-width: 767px) {
+  .retro-window {
+    width: calc(100vw - 12px);
+  }
+
+  .report-ruler {
+    margin-right: 8px;
+    margin-left: 8px;
+  }
+
+  .report-workspace {
+    min-height: 520px;
+    padding: 8px;
+  }
+
+  .report-paper.retro-ui,
+  .report-paper {
+    min-height: 820px;
+    padding: 36px 28px 52px;
+  }
+}
+
+.retro-taskbar-clock {
+  min-width: 70px;
+  height: 22px;
+  padding: 2px 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid;
+  border-color: #808080 #ffffff #ffffff #808080;
+  font-size: 11px;
+}
+
+.retro-start-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+}
+
+.win98-start-logo {
+  width: 15px;
+  height: 15px;
+  display: grid;
+  grid-template-columns: repeat(2, 6px);
+  grid-template-rows: repeat(2, 6px);
+  gap: 1px;
+  transform: skewY(-8deg);
+}
+
+.win98-start-logo i:nth-child(1) { background: #f44336; }
+.win98-start-logo i:nth-child(2) { background: #4caf50; }
+.win98-start-logo i:nth-child(3) { background: #2196f3; }
+.win98-start-logo i:nth-child(4) { background: #ffeb3b; }
+
+.retro-task-button {
+  min-width: 150px;
+  max-width: 280px;
+  height: 24px;
+  padding: 2px 8px;
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  border: 2px solid;
+  border-color: #808080 #ffffff #ffffff #808080;
+  background: #dfdfdf;
+  font-weight: 700;
+  line-height: 16px;
+}
+
+.win98-file-item-icon {
+  position: relative;
+  height: 16px;
+  border: 1px solid #000;
+  background: #fff;
+}
+
+.win98-file-item-icon::before {
+  content: "";
+  position: absolute;
+  top: -1px;
+  right: -1px;
+  width: 5px;
+  height: 5px;
+  background: #c0c0c0;
+  border-left: 1px solid #000;
+  border-bottom: 1px solid #000;
+}
+
+.win98-file-item-icon::after {
+  content: "";
+  position: absolute;
+  left: 3px;
+  top: 7px;
+  width: 8px;
+  height: 1px;
+  background: #808080;
+  box-shadow: 0 3px 0 #808080;
+}
+
+/* ========================================================================== */
+/* Windows 98 application behaviour + Models application                      */
+/* ========================================================================== */
+
+/* Keep desktop shortcuts behind application windows. The previous z-index on
+   the desktop icons created a separate stacking layer above maximized apps. */
+.retro-desktop-shell {
+  min-height: 100vh;
+  overflow-x: hidden;
+}
+
+.retro-desktop-main {
+  position: relative;
+  z-index: 20;
+}
+
+/* A maximized Win98 window occupies the desktop work area above the taskbar. */
+.retro-window-maximized {
+  display: flex;
+  flex-direction: column;
+  max-width: none;
+  max-height: none;
+  border-width: 2px;
+}
+
+.retro-window-maximized .retro-window-titlebar,
+.retro-window-maximized .retro-menubar,
+.retro-window-maximized .retro-statusbar {
+  flex: 0 0 auto;
+}
+
+.retro-window-maximized .retro-window-content {
+  flex: 1 1 auto;
+  min-height: 0;
+  overflow: auto;
+}
+
+/* Taskbar buttons are sunken while the application is visible and raised when
+   the application has been minimized, matching the Win98 taskbar convention. */
+.retro-task-button {
+  display: inline-flex;
+  align-items: center;
+  text-align: left;
+  font: 700 11px/16px var(--win98-font);
+  color: #000;
+  cursor: default;
+  border-radius: 0;
+}
+
+.retro-task-button.is-active {
+  border-color: #808080 #ffffff #ffffff #808080;
+  background:
+    repeating-linear-gradient(45deg, #ffffff 0 1px, #c0c0c0 1px 3px);
+}
+
+.retro-task-button.is-minimized {
+  border-color: #ffffff #000000 #000000 #ffffff;
+  background: #c0c0c0;
+}
+
+/* Classic raised buttons. This intentionally overrides the earlier purple
+   theme so controls across the Models application use the same system chrome. */
+.retro-btn,
+.retro-btn.retro-ui,
+.retro-btn-primary,
+.retro-btn-primary.retro-ui {
+  min-height: 25px;
+  padding: 3px 12px;
+  background: #c0c0c0 !important;
+  color: #000 !important;
+  border: 2px solid !important;
+  border-color: #ffffff #000000 #000000 #ffffff !important;
+  border-radius: 0 !important;
+  box-shadow: inset 1px 1px 0 #dfdfdf, inset -1px -1px 0 #808080 !important;
+  font: 12px/15px var(--win98-font) !important;
+  font-weight: 400 !important;
+  text-shadow: none !important;
+  cursor: default;
+  transform: none !important;
+}
+
+.retro-btn:hover,
+.retro-btn-primary:hover {
+  background: #c0c0c0 !important;
+}
+
+.retro-btn:active,
+.retro-btn-primary:active {
+  padding: 4px 11px 2px 13px;
+  border-color: #000000 #ffffff #ffffff #000000 !important;
+  box-shadow: inset 1px 1px 0 #808080 !important;
+}
+
+.retro-btn:focus-visible,
+.win98-model-menu-item:focus-visible,
+.retro-task-button:focus-visible,
+.retro-ctrl-btn:focus-visible {
+  outline: 1px dotted #000;
+  outline-offset: -4px;
+}
+
+.retro-btn:disabled,
+.retro-btn-primary:disabled {
+  color: #808080 !important;
+  text-shadow: 1px 1px #ffffff !important;
+  cursor: default;
+}
+
+.win98-default-button {
+  box-shadow:
+    0 0 0 1px #000,
+    inset 1px 1px 0 #dfdfdf,
+    inset -1px -1px 0 #808080 !important;
+  margin: 1px;
+}
+
+/* Six direct model selectors replace File / Edit / View / Help. */
+.win98-model-menubar {
+  width: 100%;
+  min-height: 22px;
+  display: flex;
+  align-items: stretch;
+  flex-wrap: wrap;
+  gap: 0;
+}
+
+.win98-model-menu-item {
+  min-height: 21px;
+  padding: 1px 8px 2px;
+  border: 0;
+  border-radius: 0;
+  background: transparent;
+  color: #000;
+  font: 12px/18px var(--win98-font);
+  white-space: nowrap;
+  cursor: default;
+}
+
+.win98-model-menu-item:hover,
+.win98-model-menu-item:focus,
+.win98-model-menu-item.is-active {
+  background: #000080;
+  color: #fff;
+  outline: 0;
+}
+
+/* Models client area */
+.win98-model-client {
+  min-height: 64vh;
+  padding: 0;
+  background: #c0c0c0;
+}
+
+.win98-model-client.is-empty {
+  min-height: 64vh;
+}
+
+.win98-model-page {
+  padding: 12px;
+  background: #c0c0c0;
+}
+
+.win98-model-heading-row {
+  min-height: 48px;
+  margin-bottom: 10px;
+  padding: 7px 8px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  border: 1px solid;
+  border-color: #ffffff #808080 #808080 #ffffff;
+  background: #c0c0c0;
+}
+
+.win98-model-title {
+  margin: 0 0 3px;
+  padding: 0;
+  color: #000;
+  font: 700 14px/18px var(--win98-font);
+}
+
+.win98-model-description {
+  margin: 0;
+  max-width: 760px;
+  color: #000;
+  font: 11px/15px var(--win98-font);
+}
+
+.win98-model-badge {
+  flex: 0 0 auto;
+  min-width: 86px;
+  padding: 3px 6px;
+  background: #ffffff;
+  border: 2px solid;
+  border-color: #808080 #ffffff #ffffff #808080;
+  color: #000080;
+  font: 700 11px/14px var(--win98-font);
+  text-align: center;
+}
+
+.win98-model-layout,
+.win98-similar-layout {
+  display: grid;
+  grid-template-columns: minmax(0, 1.12fr) minmax(320px, 0.88fr);
+  gap: 10px;
+  align-items: start;
+}
+
+/* Win98 group box. */
+.win98-groupbox {
+  min-width: 0;
+  margin: 0;
+  padding: 12px 10px 10px;
+  background: #c0c0c0;
+  border: 2px groove #ffffff;
+  border-radius: 0;
+  color: #000;
+  font: 11px/15px var(--win98-font);
+}
+
+.win98-groupbox > legend {
+  padding: 0 4px;
+  color: #000;
+  background: #c0c0c0;
+  font: 11px/15px var(--win98-font);
+}
+
+.win98-slider-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  column-gap: 14px;
+  row-gap: 10px;
+}
+
+.win98-feature-control {
+  min-width: 0;
+  padding: 2px 0 7px;
+}
+
+.win98-feature-label-row {
+  margin-bottom: 5px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+}
+
+.win98-feature-label {
+  min-width: 0;
+  overflow: hidden;
+  color: #000;
+  font: 11px/15px var(--win98-font);
+  text-transform: capitalize;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.win98-value-box {
+  min-width: 62px;
+  min-height: 21px;
+  padding: 2px 5px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: flex-end;
+  background: #ffffff;
+  color: #000;
+  border: 2px solid;
+  border-color: #808080 #ffffff #ffffff #808080;
+  box-shadow: inset 1px 1px 0 #000000;
+  border-radius: 0;
+  font: 11px/14px "Courier New", monospace;
+  white-space: nowrap;
+}
+
+.win98-trackbar-row {
+  display: grid;
+  grid-template-columns: 34px minmax(80px, 1fr) 34px;
+  align-items: center;
+  gap: 5px;
+}
+
+.win98-slider-edge {
+  overflow: hidden;
+  color: #404040;
+  font: 9px/11px var(--win98-font);
+  text-align: center;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+/* Windows 98 trackbar: square raised thumb on a thin sunken track. */
+.retro-slider,
+.win98-trackbar {
+  width: 100%;
+  height: 24px;
+  margin: 0;
+  padding: 0;
+  appearance: none;
+  -webkit-appearance: none;
+  background: transparent;
+  border: 0;
+  border-radius: 0;
+  accent-color: auto;
+  cursor: default;
+}
+
+.retro-slider::-webkit-slider-runnable-track,
+.win98-trackbar::-webkit-slider-runnable-track {
+  height: 5px;
+  background: #c0c0c0;
+  border: 2px solid;
+  border-color: #808080 #ffffff #ffffff #808080;
+  border-radius: 0;
+  box-shadow: inset 1px 1px 0 #000000;
+}
+
+.retro-slider::-webkit-slider-thumb,
+.win98-trackbar::-webkit-slider-thumb {
+  width: 13px;
+  height: 21px;
+  margin-top: -10px;
+  appearance: none;
+  -webkit-appearance: none;
+  background: #c0c0c0;
+  border: 2px solid;
+  border-color: #ffffff #000000 #000000 #ffffff;
+  border-radius: 0;
+  box-shadow: inset 1px 1px 0 #dfdfdf, inset -1px -1px 0 #808080;
+}
+
+.retro-slider::-moz-range-track,
+.win98-trackbar::-moz-range-track {
+  height: 2px;
+  background: #808080;
+  border: 2px solid;
+  border-color: #808080 #ffffff #ffffff #808080;
+  border-radius: 0;
+}
+
+.retro-slider::-moz-range-thumb,
+.win98-trackbar::-moz-range-thumb {
+  width: 11px;
+  height: 19px;
+  background: #c0c0c0;
+  border: 2px solid;
+  border-color: #ffffff #000000 #000000 #ffffff;
+  border-radius: 0;
+  box-shadow: inset 1px 1px 0 #dfdfdf, inset -1px -1px 0 #808080;
+}
+
+.retro-slider:focus,
+.win98-trackbar:focus {
+  outline: 1px dotted #000;
+  outline-offset: 1px;
+}
+
+.win98-action-row {
+  margin-top: 12px;
+  padding-top: 9px;
+  display: flex;
+  justify-content: flex-end;
+  gap: 8px;
+  border-top: 1px solid #808080;
+  box-shadow: inset 0 1px 0 #ffffff;
+}
+
+.win98-message-box {
+  margin-top: 10px;
+  padding: 7px 8px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background: #c0c0c0;
+  border: 2px solid;
+  border-color: #ffffff #000000 #000000 #ffffff;
+  color: #000;
+  font: 11px/15px var(--win98-font);
+}
+
+.win98-message-icon {
+  width: 20px;
+  height: 20px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex: 0 0 20px;
+  border: 1px solid #000;
+  background: #000080;
+  color: #fff;
+  font: 700 15px/18px var(--win98-font);
+}
+
+.win98-message-box.is-error .win98-message-icon {
+  background: #800000;
+}
+
+.win98-output-placeholder {
+  min-height: 92px;
+  padding: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: #ffffff;
+  border: 2px solid;
+  border-color: #808080 #ffffff #ffffff #808080;
+  box-shadow: inset 1px 1px 0 #000;
+  color: #404040;
+  font: 11px/15px var(--win98-font);
+  text-align: center;
+}
+
+/* Model outputs */
+.win98-result-panel {
+  color: #000;
+  font: 11px/15px var(--win98-font);
+}
+
+.win98-result-label,
+.win98-static-label {
+  margin-bottom: 5px;
+  color: #000;
+  font: 11px/15px var(--win98-font);
+}
+
+.win98-result-large-value {
+  margin-bottom: 10px;
+  padding: 7px 8px;
+  background: #ffffff;
+  border: 2px solid;
+  border-color: #808080 #ffffff #ffffff #808080;
+  box-shadow: inset 1px 1px 0 #000;
+  color: #000080;
+  font: 700 28px/32px var(--win98-font);
+}
+
+.win98-result-large-value span {
+  color: #000;
+  font-size: 13px;
+  font-weight: 400;
+}
+
+.win98-inset-display {
+  padding: 6px 8px;
+  background: #ffffff;
+  border: 2px solid;
+  border-color: #808080 #ffffff #ffffff #808080;
+  box-shadow: inset 1px 1px 0 #000;
+  border-radius: 0;
+  color: #000080;
+}
+
+.win98-result-heading {
+  margin-bottom: 10px;
+  font: 700 18px/22px var(--win98-font);
+}
+
+.win98-progress {
+  min-width: 80px;
+  height: 18px;
+  padding: 2px;
+  overflow: hidden;
+  background: #ffffff;
+  border: 2px solid;
+  border-color: #808080 #ffffff #ffffff #808080;
+  box-shadow: inset 1px 1px 0 #000;
+  border-radius: 0;
+}
+
+.win98-progress-fill {
+  height: 100%;
+  min-width: 0;
+  background:
+    repeating-linear-gradient(
+      to right,
+      #000080 0,
+      #000080 7px,
+      #ffffff 7px,
+      #ffffff 9px
+    );
+}
+
+.win98-result-note {
+  margin-top: 9px;
+  padding: 5px 6px;
+  background: #ffffe1;
+  border: 1px solid #000;
+  color: #000;
+  font: 10px/14px var(--win98-font);
+}
+
+.win98-probability-list {
+  display: grid;
+  gap: 7px;
+}
+
+.win98-probability-row,
+.win98-genre-row {
+  display: grid;
+  grid-template-columns: 92px minmax(80px, 1fr) 48px;
+  align-items: center;
+  gap: 7px;
+}
+
+.win98-probability-name,
+.win98-genre-name {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.win98-probability-value {
+  font: 10px/13px "Courier New", monospace;
+  text-align: right;
+}
+
+.win98-listbox {
+  background: #ffffff;
+  border: 2px solid;
+  border-color: #808080 #ffffff #ffffff #808080;
+  box-shadow: inset 1px 1px 0 #000;
+  border-radius: 0;
+}
+
+.win98-genre-row {
+  grid-template-columns: 22px 90px minmax(70px, 1fr) 48px;
+  padding: 5px 6px;
+  border-bottom: 1px solid #dfdfdf;
+}
+
+.win98-genre-row:last-child {
+  border-bottom: 0;
+}
+
+.win98-list-index {
+  width: 18px;
+  height: 18px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  background: #000080;
+  color: #fff;
+  font: 700 10px/18px var(--win98-font);
+}
+
+.win98-properties-box {
+  padding: 7px;
+  background: #ffffff;
+  border: 2px solid;
+  border-color: #808080 #ffffff #ffffff #808080;
+  box-shadow: inset 1px 1px 0 #000;
+}
+
+.win98-property-row {
+  display: grid;
+  grid-template-columns: 105px minmax(0, 1fr);
+  gap: 8px;
+  padding: 4px 2px;
+  border-bottom: 1px dotted #808080;
+}
+
+.win98-property-row:last-child {
+  border-bottom: 0;
+}
+
+.win98-pca-header {
+  margin-bottom: 7px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+}
+
+.win98-chart-frame {
+  min-height: 304px;
+  padding: 3px;
+  background: #ffffff;
+  border: 2px solid;
+  border-color: #808080 #ffffff #ffffff #808080;
+  box-shadow: inset 1px 1px 0 #000;
+}
+
+/* Similar-song list */
+.win98-song-list {
+  max-height: 470px;
+  overflow: auto;
+}
+
+.win98-song-row {
+  min-height: 48px;
+  padding: 5px 6px;
+  display: grid;
+  grid-template-columns: 24px minmax(0, 1fr) 76px;
+  gap: 7px;
+  align-items: start;
+  border-bottom: 1px solid #dfdfdf;
+}
+
+.win98-song-row:last-child {
+  border-bottom: 0;
+}
+
+.win98-song-row:hover {
+  background: #000080;
+  color: #fff;
+}
+
+.win98-song-index {
+  width: 20px;
+  height: 20px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: #c0c0c0;
+  border: 1px solid;
+  border-color: #ffffff #808080 #808080 #ffffff;
+  color: #000;
+  font: 700 10px/18px var(--win98-font);
+}
+
+.win98-song-main {
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 1px;
+}
+
+.win98-song-main strong,
+.win98-song-main span,
+.win98-song-main small {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.win98-song-main strong {
+  font-size: 11px;
+}
+
+.win98-song-main span,
+.win98-song-main small {
+  font-size: 9px;
+}
+
+.win98-song-metrics {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  font: 9px/12px "Courier New", monospace;
+}
+
+/* Classic square scrollbars for model list areas where the browser supports it. */
+.win98-song-list,
+.win98-model-client {
+  scrollbar-color: #c0c0c0 #dfdfdf;
+}
+
+.win98-song-list::-webkit-scrollbar,
+.win98-model-client::-webkit-scrollbar {
+  width: 16px;
+  height: 16px;
+}
+
+.win98-song-list::-webkit-scrollbar-track,
+.win98-model-client::-webkit-scrollbar-track {
+  background: #dfdfdf;
+}
+
+.win98-song-list::-webkit-scrollbar-thumb,
+.win98-model-client::-webkit-scrollbar-thumb {
+  background: #c0c0c0;
+  border: 2px solid;
+  border-color: #ffffff #000000 #000000 #ffffff;
+  border-radius: 0;
+}
+
+.retro-window-maximized .win98-model-client {
+  min-height: 100%;
+}
+
+@media (max-width: 900px) {
+  .win98-model-layout,
+  .win98-similar-layout {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 640px) {
+  .win98-slider-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .win98-model-heading-row {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+
+  .win98-model-menubar {
+    overflow-x: auto;
+    flex-wrap: nowrap;
+  }
+
+  .win98-model-menu-item {
+    flex: 0 0 auto;
+  }
+
+  .win98-trackbar-row {
+    grid-template-columns: 30px minmax(70px, 1fr) 30px;
+  }
+}
+
+/* ========================================================================== */
+/* Windows 98 full-interface pass: desktop, auth, home, about, profile/history */
+/* ========================================================================== */
+
+/* Desktop shortcuts --------------------------------------------------------- */
+.retro-desktop-icons {
+  position: fixed;
+  z-index: 10;
+  top: 10px;
+  left: 10px;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 5px;
+  width: 92px;
+}
+
+.retro-menu-item,
+.retro-menu-item:hover,
+.retro-menu-item:active,
+.retro-menu-item-active {
+  width: 84px;
+  min-height: 68px;
+  padding: 3px 2px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-start;
+  gap: 2px;
+  border: 1px solid transparent;
+  background: transparent !important;
+  color: #fff;
+  box-shadow: none !important;
+  transform: none !important;
+  text-decoration: none;
+  cursor: default;
+}
+
+.retro-menu-icon-wrap {
+  width: 40px;
+  height: 39px;
+  display: grid;
+  place-items: center;
+}
+
+.win98-icon {
+  display: block;
+  image-rendering: pixelated;
+}
+
+.retro-menu-label {
+  max-width: 82px;
+  padding: 1px 3px;
+  color: #fff;
+  background: transparent;
+  font: 11px/13px var(--win98-font);
+  text-align: center;
+  text-shadow: 1px 1px #000;
+  overflow-wrap: anywhere;
+}
+
+.retro-menu-item:hover .retro-menu-label,
+.retro-menu-item:focus-visible .retro-menu-label,
+.retro-menu-item-active .retro-menu-label {
+  background: #000080;
+  outline: 1px dotted #fff;
+  outline-offset: -1px;
+}
+
+.retro-menu-item:hover,
+.retro-menu-item-active {
+  border-color: transparent !important;
+  background: transparent !important;
+}
+
+.retro-menu-item:focus-visible {
+  outline: 0;
+}
+
+/* Bare desktop -------------------------------------------------------------- */
+.win98-desktop-empty {
+  min-height: calc(100vh - 80px);
+  position: relative;
+  pointer-events: none;
+}
+
+.win98-desktop-watermark {
+  position: fixed;
+  right: 28px;
+  bottom: 48px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  color: rgba(255, 255, 255, 0.18);
+  font: 700 30px/1 var(--win98-font);
+  letter-spacing: 1px;
+  text-shadow: 1px 1px rgba(0, 0, 0, 0.16);
+}
+
+.win98-watermark-wave {
+  font: 700 48px/1 "Times New Roman", serif;
+}
+
+/* Start menu ---------------------------------------------------------------- */
+.win98-start-area {
+  position: relative;
+  display: flex;
+  align-items: center;
+  height: 26px;
+}
+
+.retro-start-btn.is-open {
+  border-color: #000 #fff #fff #000 !important;
+  box-shadow: inset 1px 1px #808080 !important;
+}
+
+.win98-start-menu {
+  position: absolute;
+  left: 0;
+  bottom: 27px;
+  width: 230px;
+  min-height: 250px;
+  padding: 2px;
+  display: grid;
+  grid-template-columns: 28px 1fr;
+  background: #c0c0c0;
+  border: 2px solid;
+  border-color: #fff #000 #000 #fff;
+  box-shadow: 1px 1px 0 #808080;
+}
+
+.win98-start-banner {
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+  padding: 7px 3px;
+  color: #c0c0c0;
+  background: #808080;
+  font: 700 17px/20px var(--win98-font);
+  letter-spacing: 1px;
+  writing-mode: vertical-rl;
+  transform: rotate(180deg);
+}
+
+.win98-start-items {
+  min-width: 0;
+  padding: 2px;
+  display: flex;
+  flex-direction: column;
+}
+
+.win98-start-item {
+  width: 100%;
+  min-height: 42px;
+  padding: 4px 7px;
+  display: grid;
+  grid-template-columns: 32px 1fr;
+  align-items: center;
+  gap: 7px;
+  border: 0;
+  background: transparent;
+  color: #000;
+  font: 12px/15px var(--win98-font);
+  text-align: left;
+  cursor: default;
+}
+
+.win98-start-item:hover,
+.win98-start-item:focus-visible {
+  color: #fff;
+  background: #000080;
+  outline: 0;
+}
+
+.win98-start-separator {
+  height: 2px;
+  margin: 2px 3px;
+  border-top: 1px solid #808080;
+  border-bottom: 1px solid #fff;
+}
+
+.win98-task-icon {
+  display: inline-grid;
+  width: 15px;
+  height: 15px;
+  margin-right: 5px;
+  place-items: center;
+  flex: 0 0 15px;
+  background: #fff;
+  border: 1px solid #000;
+  color: #000080;
+  font: 700 9px/1 var(--win98-font);
+}
+
+/* Shared application page --------------------------------------------------- */
+.win98-app-page {
+  min-height: 62vh;
+  padding: 10px;
+  background: #c0c0c0;
+  color: #000;
+  font: 11px/15px var(--win98-font);
+}
+
+.win98-app-page p {
+  margin: 0 0 8px;
+}
+
+.win98-app-page strong,
+.win98-app-page b {
+  font-weight: 700;
+}
+
+.win98-page-toolbar,
+.win98-history-toolbar {
+  min-height: 35px;
+  margin: -10px -10px 10px;
+  padding: 4px 6px;
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  background: #c0c0c0;
+  border-top: 1px solid #fff;
+  border-bottom: 1px solid #808080;
+}
+
+.win98-toolbar-address {
+  min-width: 220px;
+  margin-left: 5px;
+  display: grid;
+  grid-template-columns: auto minmax(130px, 1fr);
+  align-items: center;
+  gap: 5px;
+  flex: 1;
+}
+
+.win98-address-box,
+.win98-input,
+.win98-select {
+  min-height: 22px;
+  padding: 2px 5px;
+  background: #fff;
+  color: #000;
+  border: 2px solid;
+  border-color: #808080 #fff #fff #808080;
+  box-shadow: inset 1px 1px 0 #000;
+  border-radius: 0;
+  font: 11px/15px var(--win98-font);
+}
+
+.win98-input {
+  width: 100%;
+}
+
+.win98-input:focus,
+.win98-select:focus {
+  outline: 1px dotted #000;
+  outline-offset: -4px;
+}
+
+.win98-input:disabled {
+  background: #c0c0c0;
+  color: #808080;
+  text-shadow: 1px 1px #fff;
+  box-shadow: none;
+}
+
+.win98-select {
+  min-width: 170px;
+  height: 23px;
+  appearance: auto;
+}
+
+.win98-rule {
+  height: 2px;
+  margin: 10px 0;
+  border-top: 1px solid #808080;
+  border-bottom: 1px solid #fff;
+}
+
+.win98-muted {
+  color: #606060;
+}
+
+.win98-info-row {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+}
+
+.win98-info-row > div {
+  min-width: 0;
+  flex: 1;
+}
+
+/* Home ---------------------------------------------------------------------- */
+.win98-home-banner {
+  min-height: 84px;
+  margin-bottom: 10px;
+  padding: 10px 12px;
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  background: #fff;
+  border: 2px solid;
+  border-color: #808080 #fff #fff #808080;
+  box-shadow: inset 1px 1px 0 #000;
+}
+
+.win98-home-logo {
+  width: 56px;
+  height: 56px;
+  display: grid;
+  place-items: center;
+  flex: 0 0 56px;
+  background: linear-gradient(135deg, #000080, #1084d0);
+  color: #fff;
+  border: 1px solid #000;
+  font: 700 40px/1 "Times New Roman", serif;
+}
+
+.win98-home-banner h1,
+.win98-about-header h1 {
+  margin: 0 0 4px;
+  color: #000080;
+  font: 700 24px/28px var(--win98-font);
+}
+
+.win98-home-banner p,
+.win98-about-header p {
+  margin: 0;
+  color: #000;
+  font: 12px/16px var(--win98-font);
+}
+
+.win98-home-grid,
+.win98-about-grid {
+  display: grid;
+  grid-template-columns: minmax(0, 1.4fr) minmax(260px, 0.8fr);
+  gap: 10px;
+  margin-bottom: 10px;
+}
+
+.win98-quick-start {
+  margin-top: 0;
+}
+
+.win98-quick-step {
+  min-height: 30px;
+  display: grid;
+  grid-template-columns: 24px 1fr;
+  gap: 7px;
+  align-items: start;
+}
+
+.win98-quick-step > span {
+  width: 20px;
+  height: 20px;
+  display: grid;
+  place-items: center;
+  background: #000080;
+  color: #fff;
+  font: 700 10px/20px var(--win98-font);
+}
+
+.win98-quick-step p {
+  margin: 2px 0 0;
+}
+
+/* About --------------------------------------------------------------------- */
+.win98-about-header {
+  min-height: 74px;
+  padding: 7px 10px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.win98-about-header small {
+  color: #606060;
+  font-size: 10px;
+}
+
+.win98-about-question {
+  margin: 0 0 10px;
+  min-height: auto;
+  padding: 8px 10px;
+  color: #000;
+  font-style: italic;
+}
+
+.win98-team-row {
+  min-height: 42px;
+  padding: 4px 6px;
+  display: grid;
+  grid-template-columns: 30px 1fr;
+  gap: 7px;
+  align-items: center;
+  border-bottom: 1px solid #dfdfdf;
+}
+
+.win98-team-row:last-child {
+  border-bottom: 0;
+}
+
+.win98-team-row div {
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+}
+
+.win98-team-row span {
+  color: #404040;
+  font-size: 10px;
+}
+
+.win98-check-list {
+  margin: 0;
+  padding: 0 0 0 20px;
+  list-style: square;
+}
+
+.win98-check-list li {
+  margin: 0 0 7px;
+}
+
+.win98-tech-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 5px;
+}
+
+.win98-tech-item {
+  padding: 2px 7px;
+  background: #fff;
+  border: 1px solid;
+  border-color: #808080 #fff #fff #808080;
+  box-shadow: inset 1px 1px #000;
+  font: 10px/14px var(--win98-font);
+}
+
+.win98-about-footer {
+  margin-top: 10px;
+  padding: 5px 2px 0;
+  display: flex;
+  justify-content: space-between;
+  border-top: 1px solid #808080;
+  box-shadow: inset 0 1px #fff;
+  color: #404040;
+  font-size: 10px;
+}
+
+/* Dialogs / auth ------------------------------------------------------------ */
+.win98-auth-desktop {
+  min-height: 100vh;
+  padding: 24px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  background: #008080;
+  font-family: var(--win98-font);
+}
+
+.win98-dialog {
+  width: min(440px, calc(100vw - 24px));
+  padding: 2px;
+  background: #c0c0c0;
+  border: 2px solid;
+  border-color: #fff #000 #000 #fff;
+  box-shadow: 1px 1px 0 #808080;
+  color: #000;
+  font: 11px/15px var(--win98-font);
+}
+
+.win98-dialog-titlebar {
+  height: 22px;
+  padding: 2px 2px 2px 3px;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  background: linear-gradient(90deg, #000080 0%, #1084d0 100%);
+  color: #fff;
+  font-weight: 700;
+}
+
+.win98-dialog-title-icon {
+  width: 16px;
+  height: 16px;
+  display: grid;
+  place-items: center;
+  flex: 0 0 16px;
+  background: #fff;
+  border: 1px solid #000;
+  color: #000080;
+  font-size: 10px;
+}
+
+.win98-dialog-title {
+  min-width: 0;
+  flex: 1;
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+
+.win98-dialog-body {
+  padding: 14px;
+}
+
+.win98-dialog-footer {
+  margin: 0 8px 8px;
+  padding-top: 8px;
+  border-top: 1px solid #808080;
+  box-shadow: inset 0 1px #fff;
+}
+
+.win98-auth-dialog {
+  width: min(470px, calc(100vw - 24px));
+}
+
+.win98-register-dialog {
+  width: min(500px, calc(100vw - 24px));
+}
+
+.win98-auth-form {
+  display: block;
+}
+
+.win98-auth-intro {
+  margin-bottom: 15px;
+  display: grid;
+  grid-template-columns: 52px 1fr;
+  align-items: center;
+  gap: 12px;
+}
+
+.win98-auth-intro p {
+  margin: 0;
+}
+
+.win98-form-grid {
+  display: grid;
+  grid-template-columns: 100px minmax(0, 1fr);
+  align-items: center;
+  gap: 8px 10px;
+}
+
+.win98-form-grid > label {
+  text-align: right;
+}
+
+.win98-auth-links {
+  margin: 12px 0 3px 110px;
+  display: flex;
+  gap: 6px;
+  font-size: 10px;
+}
+
+.win98-auth-links a {
+  color: #000080;
+  text-decoration: underline;
+}
+
+.win98-dialog-button-row {
+  margin-top: 14px;
+  display: flex;
+  justify-content: flex-end;
+  gap: 7px;
+}
+
+.win98-dialog-button-row .retro-btn {
+  min-width: 76px;
+}
+
+.win98-auth-caption {
+  margin-top: 12px;
+  color: #fff;
+  font: 10px/13px var(--win98-font);
+  text-shadow: 1px 1px #000;
+}
+
+/* Login-required modal ------------------------------------------------------ */
+.win98-modal-overlay {
+  position: fixed;
+  z-index: 500;
+  inset: 0;
+  padding: 16px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(0, 0, 0, 0.36);
+}
+
+.win98-message-dialog {
+  width: min(520px, calc(100vw - 24px));
+}
+
+.win98-modal-message {
+  display: grid;
+  grid-template-columns: 46px 1fr;
+  gap: 12px;
+  align-items: start;
+}
+
+.win98-modal-message p {
+  margin: 0 0 6px;
+}
+
+/* Profile property sheet ---------------------------------------------------- */
+.win98-profile-page {
+  padding-top: 8px;
+}
+
+.win98-property-tabs {
+  position: relative;
+  z-index: 2;
+  display: flex;
+  align-items: flex-end;
+  gap: 1px;
+  padding-left: 6px;
+}
+
+.win98-tab {
+  min-width: 76px;
+  height: 24px;
+  padding: 2px 10px 3px;
+  background: #c0c0c0;
+  border: 2px solid;
+  border-color: #fff #808080 transparent #fff;
+  border-radius: 0;
+  color: #000;
+  font: 11px/15px var(--win98-font);
+  cursor: default;
+}
+
+.win98-tab.is-active {
+  height: 26px;
+  margin-bottom: -2px;
+  padding-top: 3px;
+  border-bottom-color: #c0c0c0;
+}
+
+.win98-property-sheet {
+  position: relative;
+  z-index: 1;
+  padding: 14px 12px 10px;
+  border: 2px solid;
+  border-color: #fff #808080 #808080 #fff;
+}
+
+.win98-profile-summary {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.win98-profile-avatar {
+  width: 66px;
+  height: 66px;
+  display: grid;
+  place-items: center;
+  background: #fff;
+  border: 2px solid;
+  border-color: #808080 #fff #fff #808080;
+  box-shadow: inset 1px 1px 0 #000;
+}
+
+.win98-profile-identity {
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.win98-profile-identity strong {
+  font-size: 14px;
+}
+
+.win98-profile-form-grid {
+  grid-template-columns: 120px minmax(0, 1fr);
+}
+
+.win98-field-help {
+  margin-top: 3px;
+  color: #606060;
+  font-size: 9px;
+}
+
+.win98-profile-buttons {
+  margin-top: 12px;
+}
+
+/* History list-view --------------------------------------------------------- */
+.win98-history-toolbar {
+  margin-bottom: 8px;
+}
+
+.win98-toolbar-spacer {
+  flex: 1;
+}
+
+.win98-history-empty {
+  min-height: 260px;
+  padding: 40px 12px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  background: #fff;
+  border: 2px solid;
+  border-color: #808080 #fff #fff #808080;
+  box-shadow: inset 1px 1px #000;
+  text-align: center;
+}
+
+.win98-listview-frame {
+  min-height: 360px;
+  overflow: auto;
+  background: #fff;
+  border: 2px solid;
+  border-color: #808080 #fff #fff #808080;
+  box-shadow: inset 1px 1px #000;
+}
+
+.win98-listview-table {
+  width: 100%;
+  border-collapse: collapse;
+  table-layout: fixed;
+  font: 10px/14px var(--win98-font);
+}
+
+.win98-listview-table th {
+  height: 23px;
+  padding: 3px 6px;
+  background: #c0c0c0;
+  border: 2px solid;
+  border-color: #fff #808080 #808080 #fff;
+  color: #000;
+  font-weight: 400;
+  text-align: left;
+}
+
+.win98-listview-table th:nth-child(1) { width: 28%; }
+.win98-listview-table th:nth-child(2) { width: 47%; }
+.win98-listview-table th:nth-child(3) { width: 25%; }
+
+.win98-listview-table td {
+  min-height: 24px;
+  padding: 4px 6px;
+  border-bottom: 1px dotted #c0c0c0;
+  vertical-align: middle;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.win98-listview-table tbody tr:hover td {
+  background: #000080;
+  color: #fff;
+}
+
+.win98-history-model-cell {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  min-width: 0;
+}
+
+/* React Toastify as classic Windows notifications -------------------------- */
+.retro-toast-container {
+  width: min(360px, calc(100vw - 20px)) !important;
+  padding: 0 !important;
+}
+
+.retro-toast,
+.Toastify__toast.retro-toast {
+  min-height: 58px !important;
+  margin-bottom: 6px !important;
+  padding: 7px 28px 7px 9px !important;
+  background: #c0c0c0 !important;
+  color: #000 !important;
+  border: 2px solid !important;
+  border-color: #fff #000 #000 #fff !important;
+  border-radius: 0 !important;
+  box-shadow: 1px 1px 0 #808080 !important;
+  font: 11px/15px var(--win98-font) !important;
+}
+
+.Toastify__toast-icon {
+  width: 20px !important;
+}
+
+.Toastify__close-button,
+.Toastify__close-button:hover {
+  position: absolute;
+  top: 4px;
+  right: 4px;
+  width: 16px;
+  height: 16px;
+  padding: 0 !important;
+  display: grid;
+  place-items: center;
+  background: #c0c0c0 !important;
+  color: #000 !important;
+  border: 1px solid !important;
+  border-color: #fff #000 #000 #fff !important;
+  border-radius: 0 !important;
+  opacity: 1 !important;
+}
+
+.Toastify__close-button svg {
+  width: 10px;
+  height: 10px;
+}
+
+/* Make generic text links in system chrome look period-correct. */
+.win98-app-page a,
+.win98-dialog a {
+  color: #000080;
+}
+
+/* Responsive behaviour ------------------------------------------------------ */
+@media (max-width: 767px) {
+  .retro-desktop-icons {
+    position: absolute;
+    top: 8px;
+    left: 8px;
+    right: 8px;
+    width: auto;
+    flex-direction: row;
+    flex-wrap: wrap;
+    gap: 2px;
+  }
+
+  .retro-menu-item,
+  .retro-menu-item:hover,
+  .retro-menu-item:active,
+  .retro-menu-item-active {
+    width: 72px;
+    min-height: 62px;
+  }
+
+  .retro-menu-icon-wrap {
+    height: 34px;
+  }
+
+  .retro-menu-label {
+    max-width: 70px;
+    font-size: 10px;
+  }
+
+  .win98-home-grid,
+  .win98-about-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .win98-page-toolbar {
+    flex-wrap: wrap;
+  }
+
+  .win98-toolbar-address {
+    flex-basis: 100%;
+    margin-left: 0;
+  }
+
+  .win98-form-grid,
+  .win98-profile-form-grid {
+    grid-template-columns: 1fr;
+    gap: 3px;
+  }
+
+  .win98-form-grid > label {
+    margin-top: 5px;
+    text-align: left;
+  }
+
+  .win98-auth-links {
+    margin-left: 0;
+  }
+
+  .win98-dialog-button-row {
+    flex-wrap: wrap;
+  }
+
+  .win98-listview-table th:nth-child(1) { width: 34%; }
+  .win98-listview-table th:nth-child(2) { width: 66%; }
+  .win98-listview-table th:nth-child(3),
+  .win98-listview-table td:nth-child(3) { display: none; }
+}
+
+/* ========================================================================== */
+/* Report viewport scrolling + model input control refinement                  */
+/* ========================================================================== */
+
+/* The Word-style report is a desktop application, not a tall web page. The
+   browser viewport stays fixed and only the document workspace scrolls. */
+body.report-route-active {
+  height: 100dvh;
+  overflow: hidden;
+}
+
+body.report-route-active #root {
+  height: 100dvh;
+  overflow: hidden;
+}
+
+.report-app-window {
+  height: calc(100dvh - 64px);
+  max-height: calc(100dvh - 64px);
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+.report-app-window.retro-window-maximized {
+  height: auto;
+  max-height: none;
+}
+
+.report-app-window .retro-window-titlebar,
+.report-app-window .retro-menubar,
+.report-app-window .retro-statusbar {
+  flex: 0 0 auto;
+}
+
+.report-app-window .retro-window-content {
+  flex: 1 1 auto;
+  min-height: 0;
+  overflow: hidden;
+}
+
+.report-app-window .report-editor-shell {
+  height: 100%;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+.report-app-window .report-ruler {
+  flex: 0 0 22px;
+}
+
+.report-app-window .report-workspace {
+  flex: 1 1 auto;
+  min-height: 0;
+  overflow: auto;
+  overscroll-behavior: contain;
+}
+
+/* Continuous measurements without a meaningful fixed 0..1 domain use a
+   classic Windows edit field. This avoids implying that duration, tempo or
+   loudness are restricted by arbitrary slider endpoints. */
+.win98-field-control {
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  gap: 5px;
+}
+
+.win98-edit-row {
+  display: grid;
+  grid-template-columns: minmax(90px, 1fr) auto;
+  align-items: center;
+  gap: 6px;
+}
+
+.win98-edit-field,
+.win98-combo-box {
+  width: 100%;
+  min-width: 0;
+  height: 23px;
+  padding: 2px 5px;
+  background: #ffffff;
+  color: #000000;
+  border: 2px solid;
+  border-color: #808080 #ffffff #ffffff #808080;
+  border-radius: 0;
+  box-shadow: inset 1px 1px 0 #000000;
+  outline: 0;
+  font: 11px/15px "MS Sans Serif", Tahoma, sans-serif;
+}
+
+.win98-edit-field:focus,
+.win98-combo-box:focus {
+  outline: 1px dotted #000000;
+  outline-offset: -4px;
+}
+
+.win98-edit-field::selection,
+.win98-combo-box option:checked {
+  background: #000080;
+  color: #ffffff;
+}
+
+.win98-combo-box {
+  padding-right: 2px;
+  cursor: default;
+}
+
+.win98-input-unit {
+  min-width: 36px;
+  color: #000000;
+  font: 10px/14px "MS Sans Serif", Tahoma, sans-serif;
+}
+
+.win98-field-hint {
+  min-height: 12px;
+  color: #404040;
+  font: 9px/12px "MS Sans Serif", Tahoma, sans-serif;
+}
+
+@media (max-width: 767px) {
+  .report-app-window {
+    height: calc(100dvh - 168px);
+    max-height: calc(100dvh - 168px);
+  }
+
+  .report-app-window.retro-window-maximized {
+    height: auto;
+    max-height: none;
+  }
+}
+
+/* ========================================================================== */
+/* Text-entry reliability fix                                                  */
+/* ========================================================================== */
+
+/* Native edit controls must always behave like edit controls. Explicitly keep
+   them above decorative bevel layers and give them a real text caret/cursor. */
+.win98-edit-field,
+.win98-input,
+.win98-auth-form input:not([type="range"]),
+.win98-profile-page input:not([type="range"]) {
+  position: relative;
+  z-index: 1;
+  pointer-events: auto !important;
+  user-select: text !important;
+  -webkit-user-select: text !important;
+  cursor: text !important;
+  caret-color: #000000;
+}
+
+.win98-edit-field:disabled,
+.win98-input:disabled {
+  cursor: default !important;
+}
+
+/* Do not let labels/unit text accidentally become a transparent interaction
+   layer over the edit box in dense two-column model layouts. */
+.win98-edit-row {
+  position: relative;
+  isolation: isolate;
+}
+
+.win98-input-unit,
+.win98-field-hint {
+  position: relative;
+  z-index: 0;
+}

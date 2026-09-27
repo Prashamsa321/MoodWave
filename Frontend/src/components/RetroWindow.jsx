@@ -1,57 +1,149 @@
-import { useNavigate } from "react-router-dom";
+import { useEffect, useMemo, useState } from "react";
+import { useLocation, useNavigate } from "react-router-dom";
 
-export default function RetroWindow({ title, children }) {
+const WINDOW_STATE_EVENT = "moodwave:window-state";
+const WINDOW_COMMAND_EVENT = "moodwave:window-command";
+
+export default function RetroWindow({
+  title,
+  children,
+  menuBar,
+  statusText = "Ready",
+  appIcon = "▣",
+  windowId,
+  windowClassName = "",
+}) {
   const navigate = useNavigate();
+  const location = useLocation();
+  const [maximized, setMaximized] = useState(false);
+  const [minimized, setMinimized] = useState(false);
 
-  const handleClose = () => {
-    navigate("/");
-  };
+  const id = useMemo(
+    () => windowId || location.pathname || title,
+    [windowId, location.pathname, title],
+  );
+
+  useEffect(() => {
+    window.dispatchEvent(
+      new CustomEvent(WINDOW_STATE_EVENT, {
+        detail: { id, title, minimized, maximized },
+      }),
+    );
+  }, [id, title, minimized, maximized]);
+
+  useEffect(() => {
+    const onWindowCommand = (event) => {
+      const detail = event.detail || {};
+      if (detail.id !== id) return;
+
+      switch (detail.command) {
+        case "minimize":
+          setMinimized(true);
+          break;
+        case "restore":
+          setMinimized(false);
+          break;
+        case "toggle-minimize":
+          setMinimized((value) => !value);
+          break;
+        case "maximize":
+          setMinimized(false);
+          setMaximized(true);
+          break;
+        case "restore-size":
+          setMinimized(false);
+          setMaximized(false);
+          break;
+        default:
+          break;
+      }
+    };
+
+    window.addEventListener(WINDOW_COMMAND_EVENT, onWindowCommand);
+    return () => window.removeEventListener(WINDOW_COMMAND_EVENT, onWindowCommand);
+  }, [id]);
+
+  const handleClose = () => navigate("/");
+
+  // Classic Windows behaviour: a minimized application disappears from the
+  // desktop and remains available through its taskbar button.
+  if (minimized) return null;
 
   return (
-    <div className="retro-window">
-      {/* Title bar */}
-      <div className="retro-window-titlebar">
-        <div className="retro-window-dots">
-          <span className="retro-dot retro-dot-red" />
-          <span className="retro-dot retro-dot-yellow" />
-          <span className="retro-dot retro-dot-green" />
-        </div>
-        <span className="retro-window-title">MOODWAVE — {title}</span>
+    <section
+      className={`retro-window ${maximized ? "retro-window-maximized" : ""} ${windowClassName}`.trim()}
+      data-window-id={id}
+    >
+      <div
+        className="retro-window-titlebar"
+        onDoubleClick={() => setMaximized((value) => !value)}
+      >
+        <span className="retro-window-app-icon" aria-hidden="true">
+          {appIcon}
+        </span>
+        <span className="retro-window-title">{title}</span>
+
         <div className="retro-window-controls">
-          <button className="retro-ctrl-btn" aria-label="Minimize">
-            ─
-          </button>
-          <button className="retro-ctrl-btn" aria-label="Maximize">
-            □
+          <button
+            type="button"
+            className="retro-ctrl-btn"
+            aria-label="Minimize"
+            title="Minimize"
+            onClick={(event) => {
+              event.stopPropagation();
+              setMinimized(true);
+            }}
+          >
+            <span className="win98-control-glyph minimize-glyph" />
           </button>
           <button
-            className="retro-ctrl-btn retro-ctrl-close"
-            aria-label="Close"
-            onClick={handleClose}
+            type="button"
+            className="retro-ctrl-btn"
+            aria-label={maximized ? "Restore" : "Maximize"}
+            title={maximized ? "Restore" : "Maximize"}
+            onClick={(event) => {
+              event.stopPropagation();
+              setMaximized((value) => !value);
+            }}
           >
-            ✕
+            <span
+              className={`win98-control-glyph ${
+                maximized ? "restore-glyph" : "maximize-glyph"
+              }`}
+            />
+          </button>
+          <button
+            type="button"
+            className="retro-ctrl-btn"
+            aria-label="Close"
+            title="Close"
+            onClick={(event) => {
+              event.stopPropagation();
+              handleClose();
+            }}
+          >
+            <span className="win98-control-glyph close-glyph" />
           </button>
         </div>
       </div>
 
-      {/* Menu bar */}
       <div className="retro-menubar">
-        <span>File</span>
-        <span>Edit</span>
-        <span>View</span>
-        <span>Go</span>
-        <span>Favorites</span>
-        <span>Help</span>
+        {menuBar ?? (
+          <>
+            <span>File</span>
+            <span>Edit</span>
+            <span>View</span>
+            <span>Help</span>
+          </>
+        )}
       </div>
 
-      {/* Content */}
       <div className="retro-window-content">{children}</div>
 
-      {/* Status bar */}
       <div className="retro-statusbar">
-        <span>Ready</span>
-        <span className="ml-auto">⏵ ⏸ ⏹</span>
+        <span className="retro-status-panel">{statusText}</span>
+        <span className="retro-status-panel retro-status-grip" aria-hidden="true" />
       </div>
-    </div>
+    </section>
   );
 }

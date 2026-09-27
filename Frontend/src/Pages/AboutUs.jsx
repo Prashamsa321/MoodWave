@@ -1,61 +1,69 @@
 import RetroWindow from "../components/RetroWindow";
+import Win98Icon from "../components/Win98Icon";
+
+const TEAM = [
+  ["Pragya Gurung", "ML Training + Frontend"],
+  ["Prashamsa Lamsal", "Frontend + Integration"],
+  ["Rozina Chhetri", "Analysis + ML Training"],
+];
+
+const STACK = [
+  "React", "Vite", "Tailwind CSS", "Node.js", "Express", "MongoDB",
+  "Python", "FastAPI", "scikit-learn", "pandas",
+];
 
 export default function AboutUs() {
   return (
-    <RetroWindow title="ABOUT US">
-      <h1 className="retro-h1">✧ About MoodWave ✧</h1>
-
-      <p className="text-sm leading-relaxed mb-4">
-        MoodWave is a data science project that bridges <strong>music</strong>{" "}
-        and <strong>emotion</strong>. We ask a simple question:
-      </p>
-
-      <blockquote className="border-l-4 border-purple-400 bg-purple-50 px-4 py-3 italic text-sm mb-6">
-        "Can we quantify the emotional fingerprint of a song using measurable
-        audio features?"
-      </blockquote>
-
-      <h2 className="retro-h2">🎓 The Team</h2>
-      <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-6">
-        {[
-          { name: "Pragya Gurung", role: "Frontend + Integration" },
-          { name: "Prashamsa Lamsal", role: "ML Training + Analysis" },
-          { name: "Rozina Chhetri", role: "ML Training + Analysis" },
-        ].map((m) => (
-          <div
-            key={m.name}
-            className="border-2 border-slate-900 rounded-lg p-3 text-center"
-            style={{ background: "#f8f5ff" }}
-          >
-            <div className="text-3xl mb-2">🎀</div>
-            <div className="font-bold text-sm">{m.name}</div>
-            <div className="text-xs text-purple-700">{m.role}</div>
+    <RetroWindow title="About MoodWave" appIcon="?" statusText="MoodWave project information">
+      <div className="win98-app-page win98-about-page">
+        <div className="win98-about-header">
+          <Win98Icon type="info" size={48} />
+          <div>
+            <h1>MoodWave</h1>
+            <p>Music Emotion Analysis</p>
+            <small>Data Science / Machine Learning Project</small>
           </div>
-        ))}
-      </div>
+        </div>
 
-      <h2 className="retro-h2">🛠 Tech Stack</h2>
-      <div className="flex flex-wrap gap-2 mb-6">
-        {[
-          "React", "Vite", "Tailwind", "Node.js", "Express",
-          "MongoDB", "Python", "FastAPI", "scikit-learn", "pandas",
-        ].map((t) => (
-          <span key={t} className="retro-pill bg-purple-200">
-            {t}
-          </span>
-        ))}
-      </div>
+        <div className="win98-inset-display win98-about-question">
+          “Can we quantify the emotional fingerprint of a song using measurable audio features?”
+        </div>
 
-      <h2 className="retro-h2">🎯 Project Goals</h2>
-      <ul className="text-sm space-y-2 list-disc list-inside">
-        <li>Collect and clean a large music dataset</li>
-        <li>Explore how valence and energy vary across genres and decades</li>
-        <li>Train 6 ML models for classification, regression, and clustering</li>
-        <li>Build an interactive dashboard for mood-based song discovery</li>
-      </ul>
+        <div className="win98-about-grid">
+          <fieldset className="win98-groupbox">
+            <legend>Team</legend>
+            <div className="win98-listbox">
+              {TEAM.map(([name, role]) => (
+                <div className="win98-team-row" key={name}>
+                  <Win98Icon type="user" size={28} />
+                  <div><strong>{name}</strong><span>{role}</span></div>
+                </div>
+              ))}
+            </div>
+          </fieldset>
 
-      <div className="mt-8 text-center text-xs text-purple-700">
-        ✦ A 6th Semester BCA Project ✦
+          <fieldset className="win98-groupbox">
+            <legend>Project goals</legend>
+            <ul className="win98-check-list">
+              <li>Clean and explore the music datasets.</li>
+              <li>Study mood, genre, country and historical patterns.</li>
+              <li>Train classification, regression and clustering models.</li>
+              <li>Expose results through an interactive web application.</li>
+            </ul>
+          </fieldset>
+        </div>
+
+        <fieldset className="win98-groupbox">
+          <legend>Technology</legend>
+          <div className="win98-tech-list">
+            {STACK.map((item) => <span className="win98-tech-item" key={item}>{item}</span>)}
+          </div>
+        </fieldset>
+
+        <div className="win98-about-footer">
+          <span>6th Semester BCA Project</span>
+          <span>MoodWave</span>
+        </div>
       </div>
     </RetroWindow>
   );

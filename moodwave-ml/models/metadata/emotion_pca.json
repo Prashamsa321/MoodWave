@@ -1,7 +1,7 @@
 {
   "model_name": "emotion_pca",
   "model_version": "1.0.0",
-  "trained_at": "2026-09-23T23:50:33",
+  "trained_at": "2026-09-27T12:22:51",
   "features": [
     "danceability",
     "energy",
@@ -17,9 +17,9 @@
   "training_rows": 115657,
   "n_components": 2,
   "explained_variance_ratio": [
-    0.28680362580004676,
-    0.15217529593829204
+    0.2868036258000465,
+    0.15217529593829215
   ],
-  "explained_variance_total": 0.4389789217383388,
-  "sklearn_version": "1.9.1"
+  "explained_variance_total": 0.43897892173833863,
+  "sklearn_version": "1.7.2"
 }

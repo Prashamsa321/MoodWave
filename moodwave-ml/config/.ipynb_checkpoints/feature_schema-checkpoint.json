@@ -1,0 +1,31 @@
+{
+    "audio_features": [
+        "danceability",
+        "energy",
+        "key",
+        "loudness",
+        "mode",
+        "speechiness",
+        "acousticness",
+        "instrumentalness",
+        "liveness",
+        "valence",
+        "tempo",
+        "duration_ms",
+        "time_signature"
+    ],
+    "mood_model_features": [
+        "danceability",
+        "key",
+        "loudness",
+        "mode",
+        "speechiness",
+        "acousticness",
+        "instrumentalness",
+        "liveness",
+        "tempo",
+        "duration_ms",
+        "time_signature"
+    ],
+    "note": "Valence and energy are excluded from the later mood classifier because they define mood_label."
+}
