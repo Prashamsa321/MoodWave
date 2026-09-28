@@ -1,7 +1,10 @@
 import { useState } from "react";
 import api from "../services/api";
+import { useAuth } from "../context/AuthContext";
+import FeatureHelpLabel from "../components/FeatureHelpLabel";
 
 export default function MoodExplore() {
+  const { isAuthenticated } = useAuth();
   const [energy, setEnergy] = useState(0.5);
   const [valence, setValence] = useState(0.5);
   const [result, setResult] = useState(null);
@@ -13,12 +16,29 @@ export default function MoodExplore() {
     setError("");
 
     try {
-      const { data } = await api.post("/predictions/recommend", {
+      const request = {
         energy,
         valence,
         limit: 10,
-      });
+      };
+
+      const { data } = await api.post("/predictions/recommend", request);
       setResult(data);
+
+      // Keep Find Similar Songs in Prediction History just like every other
+      // model. Saving is deliberately best-effort so a history write failure
+      // never hides recommendations that were returned successfully.
+      if (isAuthenticated) {
+        try {
+          await api.post("/predictions", {
+            modelType: "similar",
+            inputFeatures: request,
+            output: data,
+          });
+        } catch (saveErr) {
+          console.warn("Similar-song history save failed:", saveErr);
+        }
+      }
     } catch (err) {
       console.error(err);
       setError(err.response?.data?.message || "Failed to fetch recommendations.");
@@ -50,7 +70,7 @@ export default function MoodExplore() {
 
         <div className="win98-feature-control">
           <div className="win98-feature-label-row">
-            <label className="win98-feature-label" htmlFor="similar-energy">Energy</label>
+            <FeatureHelpLabel feature="energy" htmlFor="similar-energy" />
             <output className="win98-value-box" htmlFor="similar-energy">
               {energy.toFixed(2)}
             </output>
@@ -73,9 +93,7 @@ export default function MoodExplore() {
 
         <div className="win98-feature-control">
           <div className="win98-feature-label-row">
-            <label className="win98-feature-label" htmlFor="similar-valence">
-              Valence (positivity)
-            </label>
+            <FeatureHelpLabel feature="valence" htmlFor="similar-valence" label="Valence (positivity)" />
             <output className="win98-value-box" htmlFor="similar-valence">
               {valence.toFixed(2)}
             </output>

@@ -1,8 +1,10 @@
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 
 const WINDOW_STATE_EVENT = "moodwave:window-state";
 const WINDOW_COMMAND_EVENT = "moodwave:window-command";
+
+const clamp = (value, min, max) => Math.min(Math.max(value, min), max);
 
 export default function RetroWindow({
   title,
@@ -15,8 +17,12 @@ export default function RetroWindow({
 }) {
   const navigate = useNavigate();
   const location = useLocation();
+  const windowRef = useRef(null);
+  const dragRef = useRef(null);
   const [maximized, setMaximized] = useState(false);
   const [minimized, setMinimized] = useState(false);
+  const [dragging, setDragging] = useState(false);
+  const [position, setPosition] = useState({ x: 0, y: 0 });
 
   const id = useMemo(
     () => windowId || location.pathname || title,
@@ -63,6 +69,90 @@ export default function RetroWindow({
     return () => window.removeEventListener(WINDOW_COMMAND_EVENT, onWindowCommand);
   }, [id]);
 
+  // Keep a moved window reachable when the browser is resized or zoom changes.
+  useEffect(() => {
+    const keepWindowInBounds = () => {
+      if (maximized || minimized || !windowRef.current) return;
+
+      const windowElement = windowRef.current;
+      const desktop = windowElement.closest(".retro-desktop-main");
+      if (!desktop) return;
+
+      const rect = windowElement.getBoundingClientRect();
+      const desktopRect = desktop.getBoundingClientRect();
+      let dx = 0;
+      let dy = 0;
+
+      if (rect.left < desktopRect.left) dx = desktopRect.left - rect.left;
+      if (rect.right > desktopRect.right) dx = desktopRect.right - rect.right;
+      if (rect.top < desktopRect.top) dy = desktopRect.top - rect.top;
+      if (rect.bottom > desktopRect.bottom) dy = desktopRect.bottom - rect.bottom;
+
+      if (dx || dy) {
+        setPosition((previous) => ({
+          x: previous.x + dx,
+          y: previous.y + dy,
+        }));
+      }
+    };
+
+    window.addEventListener("resize", keepWindowInBounds);
+    return () => window.removeEventListener("resize", keepWindowInBounds);
+  }, [maximized, minimized]);
+
+  const beginDrag = (event) => {
+    if (maximized || minimized || event.button !== 0) return;
+    if (event.target.closest(".retro-window-controls")) return;
+
+    const windowElement = windowRef.current;
+    const desktop = windowElement?.closest(".retro-desktop-main");
+    if (!windowElement || !desktop) return;
+
+    const rect = windowElement.getBoundingClientRect();
+    const desktopRect = desktop.getBoundingClientRect();
+
+    dragRef.current = {
+      pointerId: event.pointerId,
+      startX: event.clientX,
+      startY: event.clientY,
+      originX: position.x,
+      originY: position.y,
+      minDx: desktopRect.left - rect.left,
+      maxDx: desktopRect.right - rect.right,
+      minDy: desktopRect.top - rect.top,
+      maxDy: desktopRect.bottom - rect.bottom,
+    };
+
+    event.currentTarget.setPointerCapture?.(event.pointerId);
+    setDragging(true);
+    event.preventDefault();
+  };
+
+  const moveDrag = (event) => {
+    const drag = dragRef.current;
+    if (!drag || drag.pointerId !== event.pointerId) return;
+
+    const dx = clamp(event.clientX - drag.startX, drag.minDx, drag.maxDx);
+    const dy = clamp(event.clientY - drag.startY, drag.minDy, drag.maxDy);
+
+    setPosition({
+      x: drag.originX + dx,
+      y: drag.originY + dy,
+    });
+  };
+
+  const endDrag = (event) => {
+    const drag = dragRef.current;
+    if (!drag || drag.pointerId !== event.pointerId) return;
+
+    if (event.currentTarget.hasPointerCapture?.(event.pointerId)) {
+      event.currentTarget.releasePointerCapture(event.pointerId);
+    }
+
+    dragRef.current = null;
+    setDragging(false);
+  };
+
   const handleClose = () => navigate("/");
 
   // Classic Windows behaviour: a minimized application disappears from the
@@ -71,11 +161,17 @@ export default function RetroWindow({
 
   return (
     <section
-      className={`retro-window ${maximized ? "retro-window-maximized" : ""} ${windowClassName}`.trim()}
+      ref={windowRef}
+      className={`retro-window ${maximized ? "retro-window-maximized" : ""} ${dragging ? "is-dragging" : ""} ${windowClassName}`.trim()}
       data-window-id={id}
+      style={maximized ? undefined : { transform: `translate3d(${position.x}px, ${position.y}px, 0)` }}
     >
       <div
         className="retro-window-titlebar"
+        onPointerDown={beginDrag}
+        onPointerMove={moveDrag}
+        onPointerUp={endDrag}
+        onPointerCancel={endDrag}
         onDoubleClick={() => setMaximized((value) => !value)}
       >
         <span className="retro-window-app-icon" aria-hidden="true">

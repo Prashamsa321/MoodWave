@@ -10,7 +10,7 @@ const MODEL_META = {
   popularity: { label: "Popularity Predictor" },
   cluster: { label: "Emotion Grouping" },
   pca: { label: "Emotion Map" },
-  similar: { label: "Similar Songs" },
+  similar: { label: "Find Similar Songs" },
 };
 
 export default function History() {
@@ -72,10 +72,15 @@ export default function History() {
           : "Cluster predicted";
       case "pca":
         return `Position: (${(out.pca_1 ?? 0).toFixed(2)}, ${(out.pca_2 ?? 0).toFixed(2)})`;
-      case "similar":
-        return out.recommendations?.length
-          ? `${out.recommendations.length} songs recommended`
-          : "Similar songs found";
+      case "similar": {
+        const count = Array.isArray(out.recommendations) ? out.recommendations.length : 0;
+        const first = out.recommendations?.[0];
+        if (!count) return "Similar-song search completed";
+        if (first?.track_name) {
+          return `${count} songs — first: ${first.track_name}`;
+        }
+        return `${count} songs recommended`;
+      }
       default:
         return "Prediction saved";
     }

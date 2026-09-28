@@ -1721,8 +1721,12 @@ body,
 
 /* Similar-song list */
 .win98-song-list {
-  max-height: 470px;
-  overflow: auto;
+  /* Show all ten recommendations when there is enough vertical room. At
+     shorter viewport heights the list becomes the local scroller instead of
+     forcing the whole Models application to grow. */
+  max-height: clamp(180px, calc(100dvh - 300px), 520px);
+  overflow-y: auto;
+  overflow-x: hidden;
 }
 
 .win98-song-row {
@@ -3084,4 +3088,109 @@ body.report-route-active #root {
     height: auto;
     max-height: none;
   }
+}
+
+/* ========================================================================== */
+/* Win98 movable application windows                                          */
+/* ========================================================================== */
+
+/* Keep normal windows bounded so there is actual desktop space to move them
+   around in. At smaller/high-zoom viewports 100% wins and internal scrolling
+   still works exactly as before. */
+.retro-desktop-main > .retro-window:not(.retro-window-maximized),
+.retro-window:not(.retro-window-maximized) {
+  height: min(680px, 100%);
+  max-height: 100%;
+  will-change: transform;
+}
+
+.retro-window-titlebar {
+  touch-action: none;
+}
+
+.retro-window.is-dragging {
+  z-index: 70;
+}
+
+/* A maximized Win98 window is not draggable; restoring returns it to the
+   position it had before maximize. */
+.retro-window.retro-window-maximized {
+  transform: none !important;
+}
+
+
+/* ========================================================================== */
+/* Model feature help tooltips                                                 */
+/* ========================================================================== */
+
+.win98-feature-help {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  min-width: 0;
+  outline: none;
+  cursor: help;
+  z-index: 2;
+}
+
+.win98-feature-help .win98-feature-label {
+  cursor: help;
+  text-decoration: underline dotted #808080;
+  text-underline-offset: 2px;
+}
+
+.win98-feature-help-mark {
+  width: 13px;
+  height: 13px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex: 0 0 13px;
+  background: #c0c0c0;
+  border: 1px solid;
+  border-color: #ffffff #404040 #404040 #ffffff;
+  color: #000080;
+  font: 700 9px/11px var(--win98-font);
+  text-decoration: none;
+}
+
+.win98-feature-tooltip {
+  position: absolute;
+  left: 0;
+  top: calc(100% + 5px);
+  width: max-content;
+  max-width: min(360px, 72vw);
+  padding: 5px 7px;
+  display: none;
+  background: #ffffe1;
+  color: #000000;
+  border: 1px solid #000000;
+  box-shadow: 1px 1px 0 rgba(0, 0, 0, 0.35);
+  font: 10px/14px var(--win98-font);
+  white-space: normal;
+  text-align: left;
+  z-index: 500;
+  pointer-events: none;
+}
+
+.win98-feature-help:hover,
+.win98-feature-help:focus,
+.win98-feature-help:focus-within {
+  z-index: 501;
+}
+
+.win98-feature-help:hover .win98-feature-tooltip,
+.win98-feature-help:focus .win98-feature-tooltip,
+.win98-feature-help:focus-within .win98-feature-tooltip {
+  display: block;
+}
+
+/* WebPet lives above the Win98 taskbar and above maximized application
+   windows. It never captures clicks, so taskbar/window controls remain usable. */
+.moodwave-web-pet {
+  user-select: none;
+  -webkit-user-select: none;
+  image-rendering: pixelated;
+  filter: none;
 }

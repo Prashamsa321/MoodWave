@@ -3,6 +3,7 @@ import { useEffect, useRef, useState } from "react";
 import RetroMenu from "../components/RetroMenu";
 import Win98Icon from "../components/Win98Icon";
 import { useAuth } from "../context/AuthContext";
+import { WebPet } from "../components/web-pet";
 
 const WINDOW_STATE_EVENT = "moodwave:window-state";
 const WINDOW_COMMAND_EVENT = "moodwave:window-command";
@@ -101,6 +102,21 @@ export default function RetroLayout() {
       <main className="retro-desktop-main">
         <Outlet />
       </main>
+
+      {/* WebPets normally walks along the bottom of the viewport. MoodWave
+          lifts the rat by exactly the Win98 taskbar height so the taskbar is
+          its floor. The higher z-index keeps it visible even over a maximized
+          application window. */}
+      <WebPet
+        animal="rat"
+        color="brown"
+        speed={6.9}
+        scale={0.8}
+        followMouse
+        zIndex={140}
+        mediaBaseUrl="https://webpets-flame.vercel.app/media"
+        style={{ bottom: "30px" }}
+      />
 
       <div className="fixed bottom-0 left-0 right-0 h-8 retro-taskbar z-[100] flex items-center px-2 text-xs">
         <div className="win98-start-area" ref={startRef}>

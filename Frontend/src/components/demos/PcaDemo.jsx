@@ -1,3 +1,4 @@
+import { memo, useMemo } from "react";
 import {
   ScatterChart,
   Scatter,
@@ -10,19 +11,30 @@ import {
 
 const CLUSTER_COLORS = ["#000080", "#008080", "#800000", "#008000", "#808000"];
 
-export default function PcaDemo({ result, clusters }) {
+function PcaDemo({ result, clusters }) {
+  const queryPoint = useMemo(() => {
+    if (!result || result.pca_1 == null || result.pca_2 == null) return [];
+    return [{ x: result.pca_1, y: result.pca_2 }];
+  }, [result?.pca_1, result?.pca_2]);
+
+  // Grouping thousands of scatter points is relatively expensive. The cluster
+  // data only changes when it is fetched, so build the groups once instead of
+  // rebuilding the entire chart every time a model input slider moves.
+  const clusterGroups = useMemo(() => {
+    const groups = {};
+
+    if (clusters?.points) {
+      clusters.points.forEach((point) => {
+        const id = point.cluster_id ?? 0;
+        if (!groups[id]) groups[id] = [];
+        groups[id].push({ x: point.pca_1 ?? 0, y: point.pca_2 ?? 0 });
+      });
+    }
+
+    return groups;
+  }, [clusters]);
+
   if (!result || result.pca_1 == null || result.pca_2 == null) return null;
-
-  const queryPoint = [{ x: result.pca_1, y: result.pca_2 }];
-  const clusterGroups = {};
-
-  if (clusters?.points) {
-    clusters.points.forEach((point) => {
-      const id = point.cluster_id ?? 0;
-      if (!clusterGroups[id]) clusterGroups[id] = [];
-      clusterGroups[id].push({ x: point.pca_1 ?? 0, y: point.pca_2 ?? 0 });
-    });
-  }
 
   return (
     <div className="win98-result-panel">
@@ -101,3 +113,8 @@ export default function PcaDemo({ result, clusters }) {
     </div>
   );
 }
+
+// Crucial for slider responsiveness: when the user only changes an input,
+// result and clusters are unchanged, so React can skip rerendering the heavy
+// Recharts scatter plot entirely.
+export default memo(PcaDemo);

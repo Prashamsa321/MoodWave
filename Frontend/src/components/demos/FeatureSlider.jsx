@@ -1,4 +1,5 @@
 import { useEffect, useRef, useState } from "react";
+import FeatureHelpLabel from "../FeatureHelpLabel";
 
 const KEY_OPTIONS = [
   [0, "C"],
@@ -157,9 +158,7 @@ export default function FeatureSlider({ feature, value, onChange }) {
     return (
       <div className="win98-feature-control">
         <div className="win98-feature-label-row">
-          <label className="win98-feature-label" htmlFor={id}>
-            {config.label}
-          </label>
+          <FeatureHelpLabel feature={feature} htmlFor={id} label={config.label} />
           <output className="win98-value-box" htmlFor={id}>
             {formatSliderValue(value, config.step)}
           </output>
@@ -186,9 +185,7 @@ export default function FeatureSlider({ feature, value, onChange }) {
   if (config.control === "select") {
     return (
       <div className="win98-feature-control win98-field-control">
-        <label className="win98-feature-label" htmlFor={id}>
-          {config.label}
-        </label>
+        <FeatureHelpLabel feature={feature} htmlFor={id} label={config.label} />
         <select
           id={id}
           className="win98-combo-box"
@@ -231,9 +228,7 @@ export default function FeatureSlider({ feature, value, onChange }) {
 
   return (
     <div className="win98-feature-control win98-field-control">
-      <label className="win98-feature-label" htmlFor={id}>
-        {config.label}
-      </label>
+      <FeatureHelpLabel feature={feature} htmlFor={id} label={config.label} />
 
       <div className="win98-edit-row">
         <input
