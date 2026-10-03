@@ -56,16 +56,34 @@ export const predictPca = async (features) => {
 // ------------------------------------------------------------------
 // Similarity
 // ------------------------------------------------------------------
-export const predictSimilar = async (features, n = 5) => {
-  const { data } = await mlClient.post(`/predict/similar?n=${n}`, features);
+export const predictSimilar = async (features, n = 20, excludeTrackId = null) => {
+  const { data } = await mlClient.post("/predict/similar", features, {
+    params: {
+      n,
+      ...(excludeTrackId ? { exclude_track_id: excludeTrackId } : {}),
+    },
+  });
   return data;
 };
 
-export const recommendByEnergyValence = async (energy, valence, limit = 10) => {
+export const recommendByEnergyValence = async (
+  energy,
+  valence,
+  limit = 20,
+  excludeTrackId = null,
+) => {
   const { data } = await mlClient.post("/recommend", {
     energy,
     valence,
     limit,
+    exclude_track_id: excludeTrackId || null,
+  });
+  return data;
+};
+
+export const searchCatalogSongs = async (query, limit = 8, mode = "2d") => {
+  const { data } = await mlClient.get("/songs/search", {
+    params: { q: query, limit, mode },
   });
   return data;
 };

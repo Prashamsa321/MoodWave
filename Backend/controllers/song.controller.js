@@ -1,4 +1,5 @@
 import Song from "../models/Song.js";
+import { searchCatalogSongs } from "../services/mlService.js";
 
 export const createSong = async (req, res) => {
   try {
@@ -13,6 +14,35 @@ export const createSong = async (req, res) => {
     res.status(500).json({
       success: false,
       message: error.message,
+    });
+  }
+};
+
+// Search the canonical ML track catalog. This powers the Win98 type-ahead
+// selector in Find Similar Songs and does not depend on MongoDB being seeded.
+export const searchSongs = async (req, res) => {
+  try {
+    const query = String(req.query.q || "").trim();
+    if (!query) {
+      return res.status(200).json({
+        success: true,
+        query: "",
+        count: 0,
+        songs: [],
+      });
+    }
+
+    const safeLimit = Math.min(Math.max(Number(req.query.limit) || 8, 1), 20);
+    const requestedMode = String(req.query.mode || "2d").toLowerCase();
+    const mode = requestedMode === "10d" ? "10d" : "2d";
+
+    const result = await searchCatalogSongs(query, safeLimit, mode);
+    return res.status(200).json({ success: true, ...result });
+  } catch (error) {
+    console.error("Song catalog search error:", error.message);
+    return res.status(500).json({
+      success: false,
+      message: error.response?.data?.detail || error.message,
     });
   }
 };
@@ -63,7 +93,7 @@ export const recommendSongs = async (req, res) => {
         };
       })
       .sort((a, b) => a.distance - b.distance)
-      .slice(0, 10);
+      .slice(0, 20);
 
     res.status(200).json({
       success: true,

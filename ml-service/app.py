@@ -8,15 +8,20 @@ import json
 import joblib
 import numpy as np
 import pandas as pd
-from fastapi import FastAPI
+from fastapi import FastAPI, Query
 from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel, Field
 
+# ------------------------------------------------------------------
+# Paths
+# ------------------------------------------------------------------
 BASE_DIR = Path(__file__).resolve().parent.parent / "moodwave-ml"
 MODELS_DIR = BASE_DIR / "models"
 ARTIFACTS_DIR = BASE_DIR / "artifacts" / "dashboard"
 
-
+# ------------------------------------------------------------------
+# Load models
+# ------------------------------------------------------------------
 print("Loading models from:", MODELS_DIR)
 
 popularity_model = joblib.load(MODELS_DIR / "popularity_regression.joblib")
@@ -26,16 +31,22 @@ kmeans_bundle = joblib.load(MODELS_DIR / "emotion_kmeans.joblib")
 pca_bundle = joblib.load(MODELS_DIR / "emotion_pca.joblib")
 similarity_bundle = joblib.load(MODELS_DIR / "similar_songs_nn.joblib")
 
-print("Models loaded")
+print("Models loaded ✅")
 
+# ------------------------------------------------------------------
+# Load manifest
+# ------------------------------------------------------------------
 with open(ARTIFACTS_DIR / "model_manifest.json") as f:
     manifest = json.load(f)
 
 POPULARITY_FEATURES = manifest["models"]["popularity"]["input_features"]
 MOOD_FEATURES = manifest["models"]["mood"]["input_features"]
 GENRE_FEATURES = manifest["models"]["genre"]["input_features"]
+SIMILARITY_FEATURES = list(similarity_bundle["features"])
 
-
+# ------------------------------------------------------------------
+# Load tables
+# ------------------------------------------------------------------
 def _load_table(name: str) -> pd.DataFrame:
     parquet_path = ARTIFACTS_DIR / f"{name}.parquet"
     csv_path = ARTIFACTS_DIR / f"{name}.csv.gz"
@@ -55,9 +66,24 @@ with open(ARTIFACTS_DIR / "cluster_profiles.json") as f:
 with open(ARTIFACTS_DIR / "mood_definition.json") as f:
     mood_definition = json.load(f)
 
-print("Dashboard tables loaded")
+print("Dashboard tables loaded ✅")
 
+# Precompute lowercase search columns once at startup. This keeps the
+# type-ahead song search responsive without modifying the exported catalog.
+_track_name_search = (
+    track_catalog["track_name"].fillna("").astype(str).str.casefold()
+    if "track_name" in track_catalog.columns
+    else pd.Series("", index=track_catalog.index)
+)
+_artist_name_search = (
+    track_catalog["artist_name"].fillna("").astype(str).str.casefold()
+    if "artist_name" in track_catalog.columns
+    else pd.Series("", index=track_catalog.index)
+)
 
+# ------------------------------------------------------------------
+# FastAPI app
+# ------------------------------------------------------------------
 app = FastAPI(title="MoodWave ML Service", version="1.0.0")
 
 app.add_middleware(
@@ -67,7 +93,9 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-
+# ------------------------------------------------------------------
+# Request schemas
+# ------------------------------------------------------------------
 class AudioFeatures(BaseModel):
     """Full 13-feature set — used by popularity, genre, predict/all."""
     danceability: float = Field(..., ge=0, le=1)
@@ -126,7 +154,8 @@ class ContinuousFeatures(BaseModel):
 class RecommendRequest(BaseModel):
     energy: float = Field(..., ge=0, le=1)
     valence: float = Field(..., ge=0, le=1)
-    limit: int = Field(default=10, ge=1, le=50)
+    limit: int = Field(default=20, ge=1, le=50)
+    exclude_track_id: str | None = None
 
 
 class SmartPredictRequest(BaseModel):
@@ -135,7 +164,9 @@ class SmartPredictRequest(BaseModel):
     limit: int = Field(default=10, ge=1, le=50)
 
 
-
+# ------------------------------------------------------------------
+# Quadrant averages + helpers
+# ------------------------------------------------------------------
 QUADRANT_AVERAGES = {
     "Euphoric":    {"danceability": 0.72, "energy": 0.75, "key": 5, "loudness": -6,  "mode": 1, "speechiness": 0.08, "acousticness": 0.20, "instrumentalness": 0.02, "liveness": 0.16, "valence": 0.70, "tempo": 121, "duration_ms": 210000, "time_signature": 4},
     "Peaceful":    {"danceability": 0.55, "energy": 0.35, "key": 5, "loudness": -12, "mode": 1, "speechiness": 0.05, "acousticness": 0.65, "instrumentalness": 0.15, "liveness": 0.14, "valence": 0.65, "tempo": 110, "duration_ms": 200000, "time_signature": 4},
@@ -168,13 +199,102 @@ def _clean_records(df: pd.DataFrame) -> list:
     return records
 
 
-
+# ------------------------------------------------------------------
+# Health
+# ------------------------------------------------------------------
 @app.get("/health")
 def health():
     return {"status": "ok", "service": "moodwave-ml"}
 
 
+# ------------------------------------------------------------------
+# Song catalog search — type-ahead source for Find Similar Songs
+# ------------------------------------------------------------------
+@app.get("/songs/search")
+def search_songs(
+    q: str = Query(..., min_length=1, max_length=120),
+    limit: int = Query(default=8, ge=1, le=20),
+    mode: str = Query(default="2d"),
+):
+    query = q.strip().casefold()
+    if not query:
+        return {"query": q, "mode": mode, "count": 0, "songs": []}
 
+    normalized_mode = "10d" if mode.strip().lower() == "10d" else "2d"
+
+    # The 2D menu only needs energy + valence. The 10D menu uses the
+    # trained NearestNeighbors model, so suggestions must have every feature
+    # expected by that model.
+    required_features = (
+        SIMILARITY_FEATURES
+        if normalized_mode == "10d"
+        else ["energy", "valence"]
+    )
+
+    valid_features = pd.Series(True, index=track_catalog.index)
+    for feature in required_features:
+        if feature not in track_catalog.columns:
+            valid_features &= False
+        else:
+            valid_features &= track_catalog[feature].notna()
+
+    title_contains = _track_name_search.str.contains(query, regex=False, na=False)
+    artist_contains = _artist_name_search.str.contains(query, regex=False, na=False)
+    mask = valid_features & (title_contains | artist_contains)
+
+    if not mask.any():
+        return {"query": q, "mode": normalized_mode, "count": 0, "songs": []}
+
+    candidates = track_catalog.loc[mask].copy()
+    title_values = _track_name_search.loc[candidates.index]
+    artist_values = _artist_name_search.loc[candidates.index]
+
+    # Rank exact/prefix title matches first, then artist matches, then
+    # broader substring matches. Popularity is only a tie-breaker.
+    candidates["_search_rank"] = np.select(
+        [
+            title_values.eq(query),
+            title_values.str.startswith(query),
+            artist_values.eq(query),
+            artist_values.str.startswith(query),
+            title_values.str.contains(query, regex=False, na=False),
+        ],
+        [0, 1, 2, 3, 4],
+        default=5,
+    )
+    candidates["_popularity_sort"] = (
+        pd.to_numeric(candidates["popularity"], errors="coerce").fillna(-1)
+        if "popularity" in candidates.columns
+        else -1
+    )
+
+    sort_columns = ["_search_rank", "_popularity_sort"]
+    ascending = [True, False]
+    if "track_name" in candidates.columns:
+        sort_columns.append("track_name")
+        ascending.append(True)
+
+    candidates = candidates.sort_values(sort_columns, ascending=ascending).head(limit)
+
+    wanted = list(dict.fromkeys([
+        "track_id", "track_name", "artist_name", "album_name",
+        "primary_genre", "genres", "mood_label", "popularity",
+        *SIMILARITY_FEATURES,
+    ]))
+    cols = [c for c in wanted if c in candidates.columns]
+    songs = _clean_records(candidates[cols])
+
+    return {
+        "query": q,
+        "mode": normalized_mode,
+        "count": len(songs),
+        "songs": songs,
+    }
+
+
+# ------------------------------------------------------------------
+# Model 1 — Popularity (13 features)
+# ------------------------------------------------------------------
 @app.post("/predict/popularity")
 def predict_popularity(f: AudioFeatures):
     df = pd.DataFrame([f.to_dict()])[POPULARITY_FEATURES]
@@ -183,7 +303,9 @@ def predict_popularity(f: AudioFeatures):
     return {"popularity": round(score, 2)}
 
 
-
+# ------------------------------------------------------------------
+# Model 2 — Mood (11 features, NO energy/valence)
+# ------------------------------------------------------------------
 @app.post("/predict/mood")
 def predict_mood(f: MoodFeatures):
     df = pd.DataFrame([f.to_dict()])[MOOD_FEATURES]
@@ -196,7 +318,9 @@ def predict_mood(f: MoodFeatures):
     }
 
 
-
+# ------------------------------------------------------------------
+# Model 3 — Genre (13 features)
+# ------------------------------------------------------------------
 @app.post("/predict/genre")
 def predict_genre(f: AudioFeatures):
     df = pd.DataFrame([f.to_dict()])[GENRE_FEATURES]
@@ -211,7 +335,9 @@ def predict_genre(f: AudioFeatures):
     }
 
 
-
+# ------------------------------------------------------------------
+# Model 4 — Cluster (10 continuous features)
+# ------------------------------------------------------------------
 @app.post("/predict/cluster")
 def predict_cluster(f: ContinuousFeatures):
     df = pd.DataFrame([f.to_dict()])
@@ -229,7 +355,9 @@ def predict_cluster(f: ContinuousFeatures):
     }
 
 
-
+# ------------------------------------------------------------------
+# Model 5 — PCA (10 continuous features)
+# ------------------------------------------------------------------
 @app.post("/project/pca")
 def project_pca(f: ContinuousFeatures):
     df = pd.DataFrame([f.to_dict()])
@@ -239,18 +367,59 @@ def project_pca(f: ContinuousFeatures):
     return {"pca_1": float(coords[0]), "pca_2": float(coords[1])}
 
 
-
+# ------------------------------------------------------------------
+# Model 6 — Similarity (10 continuous features)
+# ------------------------------------------------------------------
 @app.post("/predict/similar")
-def predict_similar(f: ContinuousFeatures, n: int = 5):
+def predict_similar(
+    f: ContinuousFeatures,
+    n: int = Query(default=20, ge=1, le=50),
+    exclude_track_id: str | None = Query(default=None),
+):
     bundle = similarity_bundle
     features = bundle["features"]
-    X = bundle["scaler"].transform(pd.DataFrame([f.to_dict()])[features])
-    idx = bundle["model"].kneighbors(X, n_neighbors=n, return_distance=False)[0]
-    tracks = _clean_records(similarity_catalog.iloc[idx])
-    return {"tracks": tracks}
+    query_df = pd.DataFrame([f.to_dict()])[features]
+    X = bundle["scaler"].transform(query_df)
+
+    # Ask for one extra neighbor when a source track is supplied so removing
+    # the source itself still leaves the requested number of recommendations.
+    catalog_size = len(similarity_catalog)
+    requested_neighbors = n + 1 if exclude_track_id else n
+    neighbor_count = min(max(requested_neighbors, 1), catalog_size)
+
+    distances, indices = bundle["model"].kneighbors(
+        X,
+        n_neighbors=neighbor_count,
+        return_distance=True,
+    )
+
+    matches = similarity_catalog.iloc[indices[0]].copy()
+    matches["distance"] = distances[0]
+
+    if exclude_track_id and "track_id" in matches.columns:
+        matches = matches[
+            matches["track_id"].astype(str) != str(exclude_track_id)
+        ]
+
+    matches = matches.head(n)
+    tracks = _clean_records(matches)
+
+    return {
+        "query": {
+            **f.to_dict(),
+            "exclude_track_id": exclude_track_id,
+        },
+        "count": len(tracks),
+        "recommendations": tracks,
+        # Keep the old key too so any older client using /predict/similar
+        # continues to work.
+        "tracks": tracks,
+    }
 
 
-
+# ------------------------------------------------------------------
+# Combined endpoints
+# ------------------------------------------------------------------
 @app.post("/predict/all")
 def predict_all(f: AudioFeatures):
     """Returns mood + popularity + genre + cluster + PCA + similar songs."""
@@ -296,10 +465,19 @@ def predict_all(f: AudioFeatures):
     }
 
 
-
+# ------------------------------------------------------------------
+# Recommendation by energy + valence
+# ------------------------------------------------------------------
 @app.post("/recommend")
 def recommend(req: RecommendRequest):
     df = track_catalog
+    df = df[df["energy"].notna() & df["valence"].notna()]
+
+    # When recommendations originate from a searched catalog song, exclude
+    # that exact source track so it does not recommend itself at distance 0.
+    if req.exclude_track_id and "track_id" in df.columns:
+        df = df[df["track_id"].astype(str) != str(req.exclude_track_id)]
+
     d2 = (df["energy"] - req.energy) ** 2 + (df["valence"] - req.valence) ** 2
     nearest = df.assign(_d2=d2).nsmallest(req.limit, "_d2")
     nearest = nearest.assign(distance=nearest["_d2"].pow(0.5)).drop(columns=["_d2"])
@@ -313,14 +491,20 @@ def recommend(req: RecommendRequest):
     songs = _clean_records(nearest[cols])
 
     return {
-        "query": {"energy": req.energy, "valence": req.valence},
+        "query": {
+            "energy": req.energy,
+            "valence": req.valence,
+            "exclude_track_id": req.exclude_track_id,
+        },
         "mood": _quadrant_from_ev(req.energy, req.valence),
         "count": len(songs),
         "recommendations": songs,
     }
 
 
-
+# ------------------------------------------------------------------
+# Smart predict (energy + valence only → all models)
+# ------------------------------------------------------------------
 @app.post("/predict/smart")
 def predict_smart(req: SmartPredictRequest):
     quadrant = _quadrant_from_ev(req.energy, req.valence)
@@ -382,7 +566,9 @@ def predict_smart(req: SmartPredictRequest):
     }
 
 
-
+# ------------------------------------------------------------------
+# Analytical endpoints
+# ------------------------------------------------------------------
 @app.get("/timeline")
 def timeline():
     return _clean_records(yearly_mood_trends)

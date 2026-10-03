@@ -9,6 +9,7 @@ import {
   runGenre,
   runCluster,
   runPca,
+  runSimilarity,
   savePrediction,
   getPredictionHistory,
 } from "../controllers/prediction.controller.js";
@@ -22,6 +23,7 @@ router.post("/mood", runMood);
 router.post("/genre", runGenre);
 router.post("/cluster", runCluster);
 router.post("/pca", runPca);
+router.post("/similar", runSimilarity);
 
 // Combined / legacy
 router.post("/predict", predictAudio);

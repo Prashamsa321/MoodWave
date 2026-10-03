@@ -8,7 +8,22 @@ import {
   predictGenre,
   predictCluster,
   predictPca,
+  predictSimilar,
 } from "../services/mlService.js";
+
+
+const SIMILARITY_FEATURES = [
+  "danceability",
+  "energy",
+  "loudness",
+  "speechiness",
+  "acousticness",
+  "instrumentalness",
+  "liveness",
+  "valence",
+  "tempo",
+  "duration_ms",
+];
 
 // ------------------------------------------------------------------
 // Combined endpoints
@@ -40,7 +55,7 @@ export const predictAudio = async (req, res) => {
 
 export const recommendSongs = async (req, res) => {
   try {
-    const { energy, valence, limit } = req.body;
+    const { energy, valence, limit, exclude_track_id } = req.body;
 
     if (
       typeof energy !== "number" ||
@@ -54,8 +69,13 @@ export const recommendSongs = async (req, res) => {
       });
     }
 
-    const safeLimit = Math.min(Math.max(Number(limit) || 10, 1), 50);
-    const result = await recommendByEnergyValence(energy, valence, safeLimit);
+    const safeLimit = Math.min(Math.max(Number(limit) || 20, 1), 50);
+    const result = await recommendByEnergyValence(
+      energy,
+      valence,
+      safeLimit,
+      exclude_track_id || null,
+    );
     res.status(200).json({ success: true, ...result });
   } catch (error) {
     console.error("Recommend error:", error.message);
@@ -142,6 +162,49 @@ export const runPca = async (req, res) => {
   } catch (error) {
     console.error("PCA error:", error.message);
     res.status(500).json({ success: false, message: error.message });
+  }
+};
+
+export const runSimilarity = async (req, res) => {
+  try {
+    const missing = SIMILARITY_FEATURES.filter(
+      (feature) => req.body[feature] === undefined || req.body[feature] === null,
+    );
+
+    if (missing.length > 0) {
+      return res.status(400).json({
+        success: false,
+        message: `Missing similarity features: ${missing.join(", ")}`,
+      });
+    }
+
+    const features = {};
+    for (const feature of SIMILARITY_FEATURES) {
+      const value = Number(req.body[feature]);
+      if (!Number.isFinite(value)) {
+        return res.status(400).json({
+          success: false,
+          message: `${feature} must be a valid number`,
+        });
+      }
+      features[feature] = value;
+    }
+
+    const safeLimit = Math.min(Math.max(Number(req.body.limit) || 20, 1), 50);
+    const data = await predictSimilar(
+      features,
+      safeLimit,
+      req.body.exclude_track_id || null,
+    );
+
+    res.status(200).json({ success: true, ...data });
+  } catch (error) {
+    console.error("10-feature similarity error:", error.message);
+    const detail = error.response?.data?.detail;
+    res.status(error.response?.status || 500).json({
+      success: false,
+      message: typeof detail === "string" ? detail : error.message,
+    });
   }
 };
 

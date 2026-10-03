@@ -11,6 +11,7 @@ import GenreDemo from "../components/demos/GenreDemo";
 import ClusterDemo from "../components/demos/ClusterDemo";
 import PcaDemo from "../components/demos/PcaDemo";
 import MoodExplore from "./MoodExplore";
+import AudioSimilarity from "./AudioSimilarity";
 
 const POPULARITY_FEATURES = [
   "danceability",
@@ -123,9 +124,16 @@ const MODELS = [
   },
   {
     id: "m6",
-    name: "Find Similar Songs",
-    menuLabel: "Find Similar Songs",
-    description: "Choose an energy and valence position and retrieve nearby tracks.",
+    name: "Similar Songs — Mood (2 Features)",
+    menuLabel: "Similar Songs (2)",
+    description: "Use Energy and Valence for a simple mood-position similarity search. You can search a catalog song or set the two sliders manually.",
+    Demo: null,
+  },
+  {
+    id: "m7",
+    name: "Similar Songs — Audio Profile (10 Features)",
+    menuLabel: "Similar Songs (10)",
+    description: "Use the trained Nearest Neighbors model across 10 standardized audio features. Search a song to load its profile, fine-tune any value, then find the closest tracks.",
     Demo: null,
   },
 ];
@@ -267,6 +275,8 @@ export default function Models() {
 
             {activeModel.id === "m6" ? (
               <MoodExplore />
+            ) : activeModel.id === "m7" ? (
+              <AudioSimilarity />
             ) : (
               <div className="win98-model-layout">
                 <fieldset className="win98-groupbox win98-input-group">

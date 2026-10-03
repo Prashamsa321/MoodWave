@@ -1,14 +1,49 @@
 import { useEffect, useRef, useState } from "react";
 import api from "../services/api";
 import { useAuth } from "../context/AuthContext";
-import FeatureHelpLabel from "../components/FeatureHelpLabel";
+import FeatureSlider from "../components/demos/FeatureSlider";
 
 const SEARCH_DEBOUNCE_MS = 180;
 
-export default function MoodExplore() {
+const SIMILARITY_FEATURES = [
+  "danceability",
+  "energy",
+  "loudness",
+  "speechiness",
+  "acousticness",
+  "instrumentalness",
+  "liveness",
+  "valence",
+  "tempo",
+  "duration_ms",
+];
+
+const DEFAULTS = {
+  danceability: 0.68,
+  energy: 0.74,
+  loudness: -6.2,
+  speechiness: 0.06,
+  acousticness: 0.18,
+  instrumentalness: 0.01,
+  liveness: 0.14,
+  valence: 0.57,
+  tempo: 124.5,
+  duration_ms: 213000,
+};
+
+function initialValues() {
+  return { ...DEFAULTS };
+}
+
+function cleanFeatureValue(song, feature) {
+  const value = Number(song?.[feature]);
+  return Number.isFinite(value) ? value : DEFAULTS[feature];
+}
+
+export default function AudioSimilarity() {
   const { isAuthenticated } = useAuth();
-  const [energy, setEnergy] = useState(0.5);
-  const [valence, setValence] = useState(0.5);
+
+  const [values, setValues] = useState(initialValues);
   const [result, setResult] = useState(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
@@ -18,6 +53,7 @@ export default function MoodExplore() {
   const [searching, setSearching] = useState(false);
   const [searchOpen, setSearchOpen] = useState(false);
   const [selectedSong, setSelectedSong] = useState(null);
+  const [fineTuned, setFineTuned] = useState(false);
   const searchRequestId = useRef(0);
 
   useEffect(() => {
@@ -34,7 +70,7 @@ export default function MoodExplore() {
       setSearching(true);
       try {
         const { data } = await api.get("/songs/search", {
-          params: { q: query, limit: 8, mode: "2d" },
+          params: { q: query, limit: 8, mode: "10d" },
         });
 
         if (requestId === searchRequestId.current) {
@@ -42,7 +78,7 @@ export default function MoodExplore() {
         }
       } catch (err) {
         if (requestId === searchRequestId.current) {
-          console.error("Song search failed:", err);
+          console.error("10-feature song search failed:", err);
           setSearchSuggestions([]);
         }
       } finally {
@@ -55,139 +91,130 @@ export default function MoodExplore() {
     return () => window.clearTimeout(timer);
   }, [searchOpen, searchQuery]);
 
-  const fetchRecommendations = async ({
-    nextEnergy = energy,
-    nextValence = valence,
+  const findSimilar = async ({
+    nextValues = values,
     sourceSong = selectedSong,
+    wasFineTuned = fineTuned,
   } = {}) => {
     setLoading(true);
     setError("");
 
     try {
       const request = {
-        energy: Number(nextEnergy),
-        valence: Number(nextValence),
+        ...nextValues,
         limit: 20,
         ...(sourceSong?.track_id
           ? { exclude_track_id: String(sourceSong.track_id) }
           : {}),
       };
 
-      const { data } = await api.post("/predictions/recommend", request);
+      const { data } = await api.post("/predictions/similar", request);
       setResult(data);
 
-      // Keep Find Similar Songs in Prediction History just like every other
-      // model. Include the selected catalog track so history explains where
-      // the energy/valence values came from.
       if (isAuthenticated) {
         try {
           await api.post("/predictions", {
             modelType: "similar",
             inputFeatures: {
-              ...request,
-              similarity_mode: "energy_valence_2d",
+              ...nextValues,
+              similarity_mode: "10_feature_nearest_neighbors",
               ...(sourceSong
                 ? {
+                    source_track_id: sourceSong.track_id || "",
                     source_track_name: sourceSong.track_name || "",
                     source_artist_name: sourceSong.artist_name || "",
+                    fine_tuned_after_selection: wasFineTuned,
                   }
                 : {}),
             },
             output: data,
           });
         } catch (saveErr) {
-          console.warn("Similar-song history save failed:", saveErr);
+          console.warn("Similarity history save failed:", saveErr.message);
         }
       }
     } catch (err) {
-      console.error(err);
-      setError(err.response?.data?.message || "Failed to fetch recommendations.");
+      setError(
+        err.response?.data?.message ||
+          "Could not find similar songs. Is the ML service running?",
+      );
     } finally {
       setLoading(false);
     }
   };
 
   const handleSelectSong = (song) => {
-    const nextEnergy = Number(song.energy);
-    const nextValence = Number(song.valence);
+    const nextValues = {};
+    SIMILARITY_FEATURES.forEach((feature) => {
+      nextValues[feature] = cleanFeatureValue(song, feature);
+    });
 
-    if (!Number.isFinite(nextEnergy) || !Number.isFinite(nextValence)) {
-      setError("That track does not have usable energy and valence values.");
-      return;
-    }
-
+    setValues(nextValues);
     setSelectedSong(song);
+    setFineTuned(false);
+    setResult(null);
+    setError("");
     setSearchQuery(
       `${song.track_name || "Unknown track"} — ${song.artist_name || "Unknown artist"}`,
     );
     setSearchSuggestions([]);
     setSearchOpen(false);
-    setEnergy(nextEnergy);
-    setValence(nextValence);
-    setResult(null);
-    setError("");
 
-    // Selecting a catalog song immediately uses its real energy/valence
-    // values to retrieve the 20 closest recommendations.
-    fetchRecommendations({
-      nextEnergy,
-      nextValence,
+    // Match the 2-feature workflow: selecting a catalog song immediately
+    // loads its 10-feature profile and retrieves the closest 20 tracks.
+    findSimilar({
+      nextValues,
       sourceSong: song,
+      wasFineTuned: false,
     });
   };
 
-  const handleSearchChange = (event) => {
-    setSearchQuery(event.target.value);
-    setSelectedSong(null);
-    setSearchOpen(true);
+  const handleFeatureChange = (feature, value) => {
+    setValues((previous) => ({ ...previous, [feature]: value }));
+    setResult(null);
+    if (selectedSong) setFineTuned(true);
   };
 
   const reset = () => {
-    searchRequestId.current += 1;
+    setValues(initialValues());
+    setResult(null);
+    setError("");
     setSearchQuery("");
     setSearchSuggestions([]);
     setSearchOpen(false);
-    setSearching(false);
     setSelectedSong(null);
-    setEnergy(0.5);
-    setValence(0.5);
-    setResult(null);
-    setError("");
+    setFineTuned(false);
   };
 
-  const quadrant =
-    valence >= 0.5
-      ? energy >= 0.5
-        ? "Euphoric"
-        : "Peaceful"
-      : energy >= 0.5
-        ? "Aggressive"
-        : "Melancholic";
+  const recommendations = result?.recommendations || result?.tracks || [];
 
   return (
-    <div className="win98-similar-layout">
-      <fieldset className="win98-groupbox">
-        <legend>2-Feature Mood Similarity</legend>
+    <div className="win98-similar-layout win98-similar-10d-layout">
+      <fieldset className="win98-groupbox win98-input-group">
+        <legend>10-Feature Audio Similarity</legend>
 
         <div className="win98-song-search-block">
-          <label className="win98-static-label" htmlFor="similar-song-search">
-            Search track catalog
-          </label>
+          <div className="win98-static-label">Search catalog song</div>
           <div className="win98-search-field-wrap">
             <span className="win98-search-icon" aria-hidden="true">♫</span>
             <input
-              id="similar-song-search"
               type="text"
               className="win98-search-input"
               value={searchQuery}
-              onChange={handleSearchChange}
-              onFocus={() => {
-                if (searchQuery.trim() && !selectedSong) setSearchOpen(true);
-              }}
               placeholder="Start typing a song or artist..."
               autoComplete="off"
-              aria-autocomplete="list"
-              aria-expanded={searchOpen && Boolean(searchQuery.trim())}
+              spellCheck={false}
+              onFocus={() => setSearchOpen(true)}
+              onChange={(event) => {
+                setSearchQuery(event.target.value);
+                setSearchOpen(true);
+                setSelectedSong(null);
+                setFineTuned(false);
+                setResult(null);
+              }}
+              onBlur={() => {
+                window.setTimeout(() => setSearchOpen(false), 120);
+              }}
             />
           </div>
 
@@ -231,83 +258,43 @@ export default function MoodExplore() {
                 <strong>{selectedSong.track_name || "Unknown track"}</strong>
                 <span>{selectedSong.artist_name || "Unknown artist"}</span>
                 <small>
-                  Loaded from catalog: Energy {energy.toFixed(2)} / Valence {valence.toFixed(2)}
+                  {fineTuned
+                    ? "10-feature profile loaded — values have been fine-tuned."
+                    : "10-feature profile loaded from the track catalog."}
                 </small>
               </div>
             </div>
           )}
 
           <div className="win98-search-help">
-            Select a result to load its real Energy and Valence values and automatically find the top 20 closest mood-position matches.
+            Select a song to load all 10 audio features. The closest 20 tracks load automatically. You can then modify any value and press Find again to fine-tune the similarity.
           </div>
         </div>
 
         <div className="win98-divider" />
 
-        <div className="win98-feature-control">
-          <div className="win98-feature-label-row">
-            <FeatureHelpLabel feature="energy" htmlFor="similar-energy" />
-            <output className="win98-value-box" htmlFor="similar-energy">
-              {energy.toFixed(2)}
-            </output>
-          </div>
-          <div className="win98-trackbar-row">
-            <span className="win98-slider-edge">Calm</span>
-            <input
-              id="similar-energy"
-              type="range"
-              min="0"
-              max="1"
-              step="0.01"
-              value={energy}
-              onChange={(event) => {
-                setEnergy(Number(event.target.value));
-                setSelectedSong(null);
-                setSearchQuery("");
-                setResult(null);
-              }}
-              className="retro-slider win98-trackbar"
-            />
-            <span className="win98-slider-edge">Intense</span>
-          </div>
+        <div className="win98-similarity-note">
+          Similarity uses standardized Danceability, Energy, Loudness, Speechiness,
+          Acousticness, Instrumentalness, Liveness, Valence, Tempo and Duration.
         </div>
 
-        <div className="win98-feature-control">
-          <div className="win98-feature-label-row">
-            <FeatureHelpLabel feature="valence" htmlFor="similar-valence" label="Valence (positivity)" />
-            <output className="win98-value-box" htmlFor="similar-valence">
-              {valence.toFixed(2)}
-            </output>
-          </div>
-          <div className="win98-trackbar-row">
-            <span className="win98-slider-edge">Sad</span>
-            <input
-              id="similar-valence"
-              type="range"
-              min="0"
-              max="1"
-              step="0.01"
-              value={valence}
-              onChange={(event) => {
-                setValence(Number(event.target.value));
-                setSelectedSong(null);
-                setSearchQuery("");
-                setResult(null);
-              }}
-              className="retro-slider win98-trackbar"
+        <div className="win98-slider-grid win98-similarity-feature-grid">
+          {SIMILARITY_FEATURES.map((feature) => (
+            <FeatureSlider
+              key={feature}
+              feature={feature}
+              value={values[feature]}
+              onChange={handleFeatureChange}
+              compact
             />
-            <span className="win98-slider-edge">Happy</span>
-          </div>
+          ))}
         </div>
-
-        <div className="win98-static-label">Current quadrant</div>
-        <div className="win98-inset-display win98-result-heading">{quadrant}</div>
 
         <div className="win98-action-row">
           <button
             type="button"
             className="retro-btn win98-default-button"
-            onClick={() => fetchRecommendations()}
+            onClick={findSimilar}
             disabled={loading}
           >
             {loading ? "Finding..." : "Find Top 20 Similar Songs"}
@@ -325,12 +312,12 @@ export default function MoodExplore() {
         )}
       </fieldset>
 
-      <fieldset className="win98-groupbox">
-        <legend>Top 20 Songs</legend>
+      <fieldset className="win98-groupbox win98-result-group">
+        <legend>Top 20 Audio Matches</legend>
 
         {!result && (
           <div className="win98-output-placeholder">
-            Search and select a song, or adjust Energy / Valence manually for the 2-feature similarity mode.
+            Select a catalog song for instant 20-track recommendations, or set the 10 audio values manually and click Find.
           </div>
         )}
 
@@ -340,21 +327,24 @@ export default function MoodExplore() {
               <div className="win98-recommend-source">
                 Based on: <strong>{selectedSong.track_name}</strong>
                 {selectedSong.artist_name ? ` — ${selectedSong.artist_name}` : ""}
+                {fineTuned ? " (fine-tuned profile)" : ""}
               </div>
             )}
-            <div className="win98-listbox win98-song-list">
-              {result.recommendations?.map((song, index) => (
-                <div key={song.track_id || index} className="win98-song-row">
+
+            <div className="win98-listbox win98-song-list win98-song-list-10d">
+              {recommendations.map((song, index) => (
+                <div key={song.track_id || index} className="win98-song-row win98-song-row-10d">
                   <div className="win98-song-index">{index + 1}</div>
                   <div className="win98-song-main">
                     <strong>{song.track_name || "Unknown"}</strong>
                     <span>{song.artist_name || "Unknown artist"}</span>
                     {song.primary_genre && <small>{song.primary_genre}</small>}
                   </div>
-                  <div className="win98-song-metrics">
-                    <span>E {song.energy?.toFixed(2)}</span>
-                    <span>V {song.valence?.toFixed(2)}</span>
-                    <span>d {song.distance?.toFixed(3)}</span>
+                  <div className="win98-song-metrics win98-song-metrics-10d">
+                    <span>E {Number(song.energy ?? 0).toFixed(2)}</span>
+                    <span>V {Number(song.valence ?? 0).toFixed(2)}</span>
+                    <span>D {Number(song.danceability ?? 0).toFixed(2)}</span>
+                    <span>d {Number(song.distance ?? 0).toFixed(3)}</span>
                   </div>
                 </div>
               ))}
