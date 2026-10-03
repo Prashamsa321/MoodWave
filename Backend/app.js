@@ -15,13 +15,11 @@ app.use(express.json());
 
 const PORT = process.env.PORT || 5000;
 
-// Try connecting to MongoDB, but don't crash the server if it fails
 mongoose
   .connect(process.env.MONGO_URI)
   .then(() => console.log("MongoDB Connected"))
   .catch((err) => console.log("MongoDB connection warning:", err.message));
 
-// Start the server regardless of DB state
 app.listen(PORT, () => {
   console.log(`Server running on http://localhost:${PORT}`);
 });

@@ -437,8 +437,8 @@ html, body, #root {
   --win98-mid-light: #dfdfdf;
   --win98-mid-dark: #808080;
   --win98-dark: #000000;
-  --win98-title: #000080;
-  --win98-title-end: #1084d0;
+  --win98-title: #1f5a7a;
+  --win98-title-end: #78abc2;
   --win98-selection: #000080;
   --win98-font: "MS Sans Serif", Tahoma, Geneva, sans-serif;
 }
@@ -458,8 +458,13 @@ body,
 }
 
 .retro-bg {
-  background: var(--win98-desktop) !important;
-  background-attachment: fixed;
+  /* Windows 98-style Clouds wallpaper supplied for MoodWave. */
+  background-color: var(--win98-desktop) !important;
+  background-image: url('/wallpapers/clouds.jpg') !important;
+  background-position: center center !important;
+  background-repeat: no-repeat !important;
+  background-size: cover !important;
+  background-attachment: fixed !important;
 }
 
 .sparkles-layer {
@@ -1938,23 +1943,6 @@ body,
   pointer-events: none;
 }
 
-.win98-desktop-watermark {
-  position: fixed;
-  right: 28px;
-  bottom: 48px;
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  color: rgba(255, 255, 255, 0.18);
-  font: 700 30px/1 var(--win98-font);
-  letter-spacing: 1px;
-  text-shadow: 1px 1px rgba(0, 0, 0, 0.16);
-}
-
-.win98-watermark-wave {
-  font: 700 48px/1 "Times New Roman", serif;
-}
-
 /* Start menu ---------------------------------------------------------------- */
 .win98-start-area {
   position: relative;
@@ -2963,18 +2951,8 @@ body.report-route-active #root {
   height: calc(100dvh - 30px);
   max-width: none;
   margin: 0;
-  padding: 128px 12px 10px;
+  padding: 12px;
   overflow: hidden;
-}
-
-@media (min-width: 768px) {
-  .retro-desktop-main {
-    width: calc(100% - 116px);
-    height: calc(100dvh - 30px);
-    margin-left: 116px;
-    padding: 28px 24px 10px 16px;
-    overflow: hidden;
-  }
 }
 
 /* Normal (non-maximized) application windows fit inside the available desktop
@@ -3075,7 +3053,7 @@ body.report-route-active #root {
     width: 100%;
     height: calc(100dvh - 30px);
     margin-left: 0;
-    padding: 128px 8px 8px;
+    padding: 8px;
   }
 
   .retro-desktop-main > .retro-window,
@@ -3194,3 +3172,897 @@ body.report-route-active #root {
   image-rendering: pixelated;
   filter: none;
 }
+
+/* ========================================================================== */
+/* Win98 resizable application windows                                        */
+/* ========================================================================== */
+
+/* Invisible edge/corner hit areas give normal Win98 windows native-feeling
+   resize behaviour without adding modern visual chrome. Maximized windows do
+   not render these handles. */
+.retro-resize-handle {
+  position: absolute;
+  z-index: 12;
+  display: block;
+  touch-action: none;
+  user-select: none;
+}
+
+.retro-resize-n,
+.retro-resize-s {
+  left: 8px;
+  right: 8px;
+  height: 5px;
+}
+
+.retro-resize-n {
+  top: 0;
+  cursor: ns-resize;
+}
+
+.retro-resize-s {
+  bottom: 0;
+  cursor: ns-resize;
+}
+
+.retro-resize-e,
+.retro-resize-w {
+  top: 8px;
+  bottom: 8px;
+  width: 5px;
+}
+
+.retro-resize-e {
+  right: 0;
+  cursor: ew-resize;
+}
+
+.retro-resize-w {
+  left: 0;
+  cursor: ew-resize;
+}
+
+.retro-resize-ne,
+.retro-resize-nw,
+.retro-resize-se,
+.retro-resize-sw {
+  width: 10px;
+  height: 10px;
+}
+
+.retro-resize-ne {
+  top: 0;
+  right: 0;
+  cursor: nesw-resize;
+}
+
+.retro-resize-nw {
+  top: 0;
+  left: 0;
+  cursor: nwse-resize;
+}
+
+.retro-resize-se {
+  right: 0;
+  bottom: 0;
+  cursor: nwse-resize;
+}
+
+.retro-resize-sw {
+  left: 0;
+  bottom: 0;
+  cursor: nesw-resize;
+}
+
+.retro-window.is-resizing {
+  user-select: none;
+  z-index: 70;
+}
+
+.retro-window.is-resizing iframe,
+.retro-window.is-resizing img,
+.retro-window.is-resizing canvas,
+.retro-window.is-resizing svg {
+  pointer-events: none;
+}
+
+/* The existing Win98 status-bar grip is now functional as the southeast
+   resize affordance, just like classic desktop applications. */
+.retro-status-grip {
+  cursor: nwse-resize;
+  touch-action: none;
+}
+
+.retro-window-maximized .retro-status-grip {
+  cursor: default;
+}
+
+
+/* ========================================================================== */
+/* Multi-window desktop manager                                                */
+/* ========================================================================== */
+
+/* Desktop applications now share the same work area like real Win98 windows
+   instead of participating in normal document flow. This allows Home, Models,
+   Reports, About, Profile and History to remain open at the same time. */
+.retro-desktop-main > .retro-window:not(.retro-window-maximized) {
+  position: absolute;
+  left: 50%;
+  top: 12px;
+  margin: 0;
+  max-height: calc(100% - 24px);
+}
+
+.retro-desktop-main > .retro-window.retro-window-maximized {
+  left: 0;
+  top: 0;
+}
+
+.retro-window.is-inactive-window .retro-window-titlebar {
+  background: linear-gradient(90deg, #687b85 0%, #a9b9c0 100%);
+  color: #e8e8e8;
+}
+
+.retro-window.is-active-window .retro-window-titlebar {
+  background: linear-gradient(90deg, var(--win98-title) 0%, var(--win98-title-end) 100%);
+  color: #fff;
+}
+
+@media (max-width: 767px) {
+  .retro-desktop-main > .retro-window:not(.retro-window-maximized) {
+    top: 8px;
+    max-height: calc(100% - 16px);
+  }
+}
+
+/* Multiple open applications share the taskbar. Buttons shrink before the
+   clock is pushed off-screen, just like a crowded Windows 98 taskbar. */
+.retro-task-window-list {
+  display: flex;
+  align-items: center;
+  gap: 2px;
+  flex: 1 1 auto;
+  min-width: 0;
+  overflow: hidden;
+}
+
+.retro-task-window-list .retro-task-entry {
+  flex: 1 1 180px;
+  min-width: 96px;
+  max-width: 220px;
+}
+
+/* Classic text menu item used by Home on every application menubar. */
+.win98-menubar-button {
+  min-width: 0;
+  height: 22px;
+  margin: 0;
+  padding: 1px 8px;
+  border: 1px solid transparent;
+  border-radius: 0;
+  background: transparent;
+  color: #000;
+  font: 12px/18px var(--win98-font);
+  cursor: default;
+}
+
+.win98-menubar-button:hover,
+.win98-menubar-button:focus-visible {
+  background: #000080;
+  color: #fff;
+  outline: none;
+}
+
+.win98-report-menubar {
+  display: flex;
+  align-items: flex-start;
+  min-width: 0;
+}
+
+.win98-home-menu-item {
+  border-right: 1px solid #808080 !important;
+  margin-right: 3px !important;
+}
+
+/* ========================================================================== */
+/* MoodWave Home — old-web mosaic, cloud-wallpaper palette                    */
+/* ========================================================================== */
+
+.win98-home-web {
+  min-height: 100%;
+  padding: 12px;
+  color: #161616;
+  /* Softer paper/grid treatment so Home and About sit naturally beside the
+     Clouds wallpaper and the muted blue Win98 chrome. */
+  background-color: #f1eee4;
+  background-image:
+    linear-gradient(rgba(63, 82, 94, 0.22) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(63, 82, 94, 0.22) 1px, transparent 1px),
+    linear-gradient(rgba(112, 166, 194, 0.12) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(112, 166, 194, 0.12) 1px, transparent 1px);
+  background-size: 88px 88px, 88px 88px, 22px 22px, 22px 22px;
+  font-family: var(--win98-font);
+}
+
+.win98-home-sitebar {
+  min-height: 42px;
+  margin-bottom: 12px;
+  padding: 6px 9px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  background: #202020;
+  color: #f6efd9;
+  border: 2px solid;
+  border-color: #ffffff #404040 #404040 #ffffff;
+  box-shadow: 3px 3px 0 rgba(0, 0, 0, 0.35);
+}
+
+.win98-home-sitebrand {
+  color: #ffffff;
+  font: 700 18px/22px "Courier New", monospace;
+  letter-spacing: 1px;
+}
+
+.win98-home-sitecopy {
+  color: #a8d7ee;
+  font: 700 11px/15px "Courier New", monospace;
+  text-transform: uppercase;
+}
+
+.win98-home-web-grid {
+  display: grid;
+  grid-template-columns: minmax(230px, 0.72fr) minmax(0, 1.8fr);
+  gap: 14px;
+  align-items: start;
+}
+
+.win98-home-side-column,
+.win98-home-main-column {
+  display: grid;
+  gap: 12px;
+  min-width: 0;
+}
+
+.win98-home-panel {
+  min-width: 0;
+  background: #efe7d2;
+  border: 2px solid;
+  border-color: #ffffff #3e3e3e #3e3e3e #ffffff;
+  box-shadow: 2px 2px 0 rgba(24, 39, 49, 0.22);
+}
+
+.win98-home-panel-title {
+  min-height: 28px;
+  padding: 3px 7px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  background: #1f5a7a;
+  color: #fff;
+  border-bottom: 2px solid #173d53;
+  font: 700 14px/20px "Courier New", monospace;
+}
+
+.win98-home-panel:nth-child(even) > .win98-home-panel-title {
+  background: #536d7a;
+  border-bottom-color: #3f5661;
+}
+
+.win98-home-panel-body {
+  padding: 10px 11px;
+  background: rgba(248, 242, 223, 0.97);
+  font: 12px/17px var(--win98-font);
+}
+
+.win98-home-panel.is-compact .win98-home-panel-body {
+  padding: 8px 10px;
+}
+
+.win98-home-panel p {
+  margin: 0 0 9px;
+}
+
+.win98-home-panel p:last-child {
+  margin-bottom: 0;
+}
+
+.win98-home-welcome-art {
+  margin-bottom: 9px;
+  padding: 10px;
+  display: grid;
+  grid-template-columns: 58px 1fr;
+  grid-template-rows: auto auto;
+  align-items: center;
+  column-gap: 10px;
+  background: #dbeaf1;
+  border: 2px solid;
+  border-color: #777 #fff #fff #777;
+}
+
+.win98-home-logo-large {
+  grid-row: 1 / 3;
+  width: 56px;
+  height: 56px;
+  display: grid;
+  place-items: center;
+  background: linear-gradient(135deg, #000080, #168cc2);
+  color: #fff;
+  border: 2px solid #111;
+  font: 700 34px/1 Georgia, serif;
+}
+
+.win98-home-welcome-art strong {
+  color: #000080;
+  font-size: 17px;
+}
+
+.win98-home-welcome-art span {
+  font: 700 10px/14px "Courier New", monospace;
+  color: #29343a;
+}
+
+.win98-home-link-list {
+  display: grid;
+  gap: 5px;
+}
+
+.win98-home-link {
+  width: 100%;
+  padding: 3px 5px;
+  text-align: left;
+  border: 0;
+  background: transparent;
+  color: #243847;
+  font: 700 12px/16px "Courier New", monospace;
+  cursor: pointer;
+}
+
+.win98-home-link span {
+  color: #000080;
+  text-decoration: underline;
+}
+
+.win98-home-link:hover,
+.win98-home-link:focus-visible {
+  background: #000080;
+  color: #fff;
+  outline: none;
+}
+
+.win98-home-link:hover span,
+.win98-home-link:focus-visible span {
+  color: #fff;
+}
+
+.win98-home-stats {
+  border: 2px solid;
+  border-color: #777 #fff #fff #777;
+  background: #fffdf4;
+}
+
+.win98-home-stat-row {
+  min-height: 27px;
+  padding: 4px 7px;
+  display: grid;
+  grid-template-columns: 1fr auto;
+  gap: 8px;
+  align-items: center;
+  border-bottom: 1px dotted #999;
+}
+
+.win98-home-stat-row:last-child {
+  border-bottom: 0;
+}
+
+.win98-home-stat-row strong {
+  color: #000080;
+}
+
+.win98-home-about-copy {
+  font: 13px/19px "Courier New", monospace;
+}
+
+.win98-home-callout {
+  margin-top: 10px;
+  padding: 8px 10px;
+  background: #d7e8ef;
+  border: 2px solid;
+  border-color: #777 #fff #fff #777;
+  color: #172c38;
+  font-weight: 700;
+}
+
+.win98-home-main-split {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+  gap: 12px;
+}
+
+.win98-home-model-list,
+.win98-home-feature-list {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.win98-home-model-list {
+  display: grid;
+  gap: 5px;
+}
+
+.win98-home-model-list li {
+  display: grid;
+  grid-template-columns: 22px 1fr;
+  align-items: center;
+  gap: 6px;
+}
+
+.win98-home-model-list li > span:first-child {
+  width: 20px;
+  height: 20px;
+  display: grid;
+  place-items: center;
+  background: #1f5a7a;
+  color: #fff;
+  font: 700 10px/20px var(--win98-font);
+}
+
+.win98-home-model-name {
+  width: auto;
+  height: auto;
+  min-width: 0;
+  padding: 2px 4px;
+  display: block;
+  place-items: initial;
+  background: transparent;
+  color: #172c38;
+  font: 700 11px/16px var(--win98-font);
+  text-decoration: none;
+  cursor: default;
+  overflow-wrap: normal;
+  word-break: normal;
+}
+
+.win98-home-feature-list {
+  display: grid;
+  gap: 7px;
+}
+
+.win98-home-feature-list li {
+  position: relative;
+  padding-left: 15px;
+}
+
+.win98-home-feature-list li::before {
+  content: "■";
+  position: absolute;
+  left: 0;
+  top: 0;
+  color: #1f5a7a;
+  font-size: 8px;
+}
+
+
+@media (max-width: 950px) {
+  .win98-home-web-grid,
+  .win98-home-main-split {
+    grid-template-columns: 1fr;
+  }
+
+  .win98-home-side-column {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .win98-home-side-column .win98-home-panel:first-child {
+    grid-column: 1 / -1;
+  }
+}
+
+@media (max-width: 620px) {
+  .win98-home-side-column {
+    grid-template-columns: 1fr;
+  }
+
+  .win98-home-sitebar {
+    align-items: flex-start;
+    flex-direction: column;
+    gap: 2px;
+  }
+}
+
+/* ========================================================================== */
+/* MoodWave About — same old-web/cloud palette as Home                        */
+/* ========================================================================== */
+
+.win98-about-web {
+  min-height: 100%;
+}
+
+.win98-about-web-grid {
+  align-items: start;
+}
+
+.win98-about-profile-card {
+  margin-bottom: 9px;
+  padding: 10px;
+  display: grid;
+  grid-template-columns: 58px minmax(0, 1fr);
+  gap: 10px;
+  align-items: center;
+  background: #dbeaf1;
+  border: 2px solid;
+  border-color: #777 #fff #fff #777;
+}
+
+.win98-about-profile-card > div:last-child {
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.win98-about-profile-card strong {
+  color: #000080;
+  font: 700 17px/20px var(--win98-font);
+}
+
+.win98-about-profile-card span {
+  color: #1d303b;
+  font: 700 11px/15px "Courier New", monospace;
+}
+
+.win98-about-profile-card small {
+  color: #4a5b64;
+  font: 700 9px/13px "Courier New", monospace;
+}
+
+.win98-about-meta {
+  border: 2px solid;
+  border-color: #777 #fff #fff #777;
+  background: #fffdf4;
+}
+
+.win98-about-meta > div {
+  min-height: 26px;
+  padding: 4px 7px;
+  display: grid;
+  grid-template-columns: minmax(72px, 0.7fr) minmax(0, 1.3fr);
+  gap: 8px;
+  align-items: center;
+  border-bottom: 1px dotted #999;
+}
+
+.win98-about-meta > div:last-child {
+  border-bottom: 0;
+}
+
+.win98-about-meta span {
+  color: #404040;
+}
+
+.win98-about-meta strong {
+  min-width: 0;
+  color: #000080;
+  overflow-wrap: anywhere;
+}
+
+.win98-about-team-list {
+  display: grid;
+  gap: 6px;
+}
+
+.win98-about-team-card {
+  min-width: 0;
+  padding: 6px;
+  display: grid;
+  grid-template-columns: 28px minmax(0, 1fr);
+  gap: 7px;
+  align-items: center;
+  background: #fffdf4;
+  border: 2px solid;
+  border-color: #777 #fff #fff #777;
+}
+
+.win98-about-team-number {
+  width: 24px;
+  height: 24px;
+  display: grid;
+  place-items: center;
+  background: #1f5a7a;
+  color: #fff;
+  font: 700 11px/24px var(--win98-font);
+}
+
+.win98-about-team-card > div:last-child {
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+}
+
+.win98-about-team-card strong {
+  color: #172c38;
+  font-size: 11px;
+}
+
+.win98-about-team-card span {
+  color: #4a4a4a;
+  font: 10px/14px "Courier New", monospace;
+}
+
+.win98-about-question-card {
+  min-height: 88px;
+  padding: 11px 15px;
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr) auto;
+  gap: 7px;
+  align-items: center;
+  background: #fffdf4;
+  border: 2px solid;
+  border-color: #777 #fff #fff #777;
+  color: #182b36;
+}
+
+.win98-about-question-card > span {
+  color: #1f5a7a;
+  font: 700 32px/1 Georgia, serif;
+}
+
+.win98-about-question-card p {
+  margin: 0;
+  text-align: center;
+  font: 700 15px/21px "Courier New", monospace;
+}
+
+.win98-about-goals {
+  gap: 8px;
+}
+
+.win98-about-built-list {
+  display: grid;
+  gap: 6px;
+}
+
+.win98-about-built-list > div {
+  min-height: 38px;
+  padding: 5px 7px;
+  display: grid;
+  grid-template-columns: 58px minmax(0, 1fr);
+  gap: 8px;
+  align-items: center;
+  background: #fffdf4;
+  border: 2px solid;
+  border-color: #777 #fff #fff #777;
+}
+
+.win98-about-built-list strong {
+  color: #000080;
+  font: 700 16px/20px "Courier New", monospace;
+}
+
+.win98-about-built-list span {
+  color: #263841;
+  font: 11px/15px var(--win98-font);
+}
+
+.win98-about-tech-grid {
+  display: grid;
+  grid-template-columns: repeat(5, minmax(90px, 1fr));
+  gap: 6px;
+}
+
+.win98-about-tech-chip {
+  min-width: 0;
+  padding: 5px 7px;
+  text-align: center;
+  background: #dbeaf1;
+  color: #172c38;
+  border: 2px solid;
+  border-color: #fff #777 #777 #fff;
+  box-shadow: 1px 1px 0 #333;
+  font: 700 10px/14px "Courier New", monospace;
+}
+
+.win98-about-credit-row {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  gap: 6px 14px;
+  color: #34454d;
+  font: 10px/14px "Courier New", monospace;
+}
+
+.win98-about-credit-row strong {
+  color: #000080;
+}
+
+@media (max-width: 1000px) {
+  .win98-about-tech-grid {
+    grid-template-columns: repeat(3, minmax(90px, 1fr));
+  }
+}
+
+@media (max-width: 620px) {
+  .win98-about-tech-grid {
+    grid-template-columns: repeat(2, minmax(90px, 1fr));
+  }
+
+  .win98-about-question-card p {
+    font-size: 12px;
+    line-height: 17px;
+  }
+}
+
+
+/* ========================================================================== */
+/* About Us — contributor mosaic, matching the Home old-web panel language    */
+/* ========================================================================== */
+
+.win98-about-contribution-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 8px;
+}
+
+.win98-about-contribution-card {
+  min-width: 0;
+  background: #fffdf4;
+  border: 2px solid;
+  border-color: #777 #fff #fff #777;
+  box-shadow: 2px 2px 0 rgba(24, 39, 49, 0.24);
+}
+
+.win98-about-contribution-head {
+  min-height: 30px;
+  padding: 4px 6px;
+  display: grid;
+  grid-template-columns: 28px minmax(0, 1fr);
+  gap: 6px;
+  align-items: center;
+  background: #28323a;
+  color: #fff;
+  border-bottom: 2px solid #111;
+  font: 700 11px/15px "Courier New", monospace;
+}
+
+.win98-about-contribution-head > span {
+  width: 24px;
+  height: 20px;
+  display: grid;
+  place-items: center;
+  background: #1f5a7a;
+  color: #fff;
+  border: 1px solid #9fd0e7;
+  font-size: 9px;
+}
+
+.win98-about-contribution-head > strong {
+  min-width: 0;
+  overflow-wrap: anywhere;
+}
+
+.win98-about-contribution-role {
+  min-height: 50px;
+  padding: 9px 8px;
+  display: flex;
+  align-items: center;
+  color: #172c38;
+  background: #efe7d2;
+  font: 700 11px/16px "Courier New", monospace;
+}
+
+@media (max-width: 900px) {
+  .win98-about-contribution-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .win98-about-contribution-role {
+    min-height: 0;
+  }
+}
+
+/* Taskbar entries now include a Win98-style close control. */
+.retro-task-entry {
+  min-width: 0;
+  height: 24px;
+  display: flex;
+  align-items: stretch;
+  background: var(--win98-silver);
+  border: 2px solid;
+  border-color: var(--win98-light) var(--win98-dark) var(--win98-dark) var(--win98-light);
+}
+
+.retro-task-entry.is-active {
+  border-color: var(--win98-dark) var(--win98-light) var(--win98-light) var(--win98-dark);
+  background: #d7e8ef;
+}
+
+.retro-task-entry.is-minimized {
+  background: #b7b7b7;
+}
+
+.retro-task-entry .retro-task-button {
+  flex: 1 1 auto;
+  min-width: 0;
+  max-width: none;
+  height: 20px;
+  margin: 0;
+  padding: 1px 4px;
+  border: 0;
+  box-shadow: none;
+  background: transparent;
+}
+
+.retro-task-title {
+  min-width: 0;
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+
+.retro-task-close-button {
+  width: 20px;
+  min-width: 20px;
+  height: 20px;
+  margin: 0;
+  padding: 0 0 2px;
+  display: grid;
+  place-items: center;
+  align-self: center;
+  border: 1px solid;
+  border-color: var(--win98-light) var(--win98-dark) var(--win98-dark) var(--win98-light);
+  border-radius: 0;
+  background: var(--win98-silver);
+  color: #111;
+  font: 700 13px/16px Arial, sans-serif;
+  cursor: default;
+}
+
+.retro-task-close-button:active {
+  border-color: var(--win98-dark) var(--win98-light) var(--win98-light) var(--win98-dark);
+  padding: 1px 0 1px 1px;
+}
+
+/* Windows intentionally occupy the full desktop work area. Desktop shortcuts
+   remain underneath (z-index 10), so windows can open and move over them. */
+.retro-desktop-main > .retro-window {
+  z-index: 30;
+}
+
+/* ========================================================================== */
+/* Desktop shortcut click-through + Home workflow layout hotfix                */
+/* ========================================================================== */
+
+/* The work-area stacking context stays above desktop shortcuts so application
+   windows can cover them. The empty/transparent work area itself must not eat
+   mouse events, otherwise the shortcuts underneath become impossible to open. */
+.retro-desktop-main {
+  pointer-events: none;
+}
+
+/* Actual application windows remain fully interactive and still render above
+   the shortcut layer. */
+.retro-desktop-main > .retro-window {
+  pointer-events: auto;
+  z-index: 30;
+}
+
+/* Keep the six workflow rows readable at normal and high browser scaling. */
+.win98-home-model-list li {
+  grid-template-columns: 22px minmax(0, 1fr);
+}
+
+.win98-home-model-list li > span:first-child {
+  flex: 0 0 auto;
+}
+
+.win98-home-model-list .win98-home-model-name {
+  width: auto;
+  height: auto;
+  min-width: 0;
+  background: transparent;
+  color: #172c38;
+  white-space: normal;
+}
+

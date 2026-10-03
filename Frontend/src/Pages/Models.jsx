@@ -242,6 +242,7 @@ export default function Models() {
 
   return (
     <RetroWindow
+      windowId="/models"
       title="MoodWave Models"
       appIcon="M"
       statusText={statusText}

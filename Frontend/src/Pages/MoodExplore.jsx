@@ -140,7 +140,7 @@ export default function MoodExplore() {
       </fieldset>
 
       <fieldset className="win98-groupbox">
-        <legend>Recommended Songs</legend>
+        <legend>Top 10 Songs</legend>
 
         {!result && (
           <div className="win98-output-placeholder">

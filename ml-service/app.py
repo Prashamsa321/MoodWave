@@ -12,16 +12,11 @@ from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel, Field
 
-# ------------------------------------------------------------------
-# Paths
-# ------------------------------------------------------------------
 BASE_DIR = Path(__file__).resolve().parent.parent / "moodwave-ml"
 MODELS_DIR = BASE_DIR / "models"
 ARTIFACTS_DIR = BASE_DIR / "artifacts" / "dashboard"
 
-# ------------------------------------------------------------------
-# Load models
-# ------------------------------------------------------------------
+
 print("Loading models from:", MODELS_DIR)
 
 popularity_model = joblib.load(MODELS_DIR / "popularity_regression.joblib")
@@ -31,11 +26,8 @@ kmeans_bundle = joblib.load(MODELS_DIR / "emotion_kmeans.joblib")
 pca_bundle = joblib.load(MODELS_DIR / "emotion_pca.joblib")
 similarity_bundle = joblib.load(MODELS_DIR / "similar_songs_nn.joblib")
 
-print("Models loaded ✅")
+print("Models loaded")
 
-# ------------------------------------------------------------------
-# Load manifest
-# ------------------------------------------------------------------
 with open(ARTIFACTS_DIR / "model_manifest.json") as f:
     manifest = json.load(f)
 
@@ -43,9 +35,7 @@ POPULARITY_FEATURES = manifest["models"]["popularity"]["input_features"]
 MOOD_FEATURES = manifest["models"]["mood"]["input_features"]
 GENRE_FEATURES = manifest["models"]["genre"]["input_features"]
 
-# ------------------------------------------------------------------
-# Load tables
-# ------------------------------------------------------------------
+
 def _load_table(name: str) -> pd.DataFrame:
     parquet_path = ARTIFACTS_DIR / f"{name}.parquet"
     csv_path = ARTIFACTS_DIR / f"{name}.csv.gz"
@@ -65,11 +55,9 @@ with open(ARTIFACTS_DIR / "cluster_profiles.json") as f:
 with open(ARTIFACTS_DIR / "mood_definition.json") as f:
     mood_definition = json.load(f)
 
-print("Dashboard tables loaded ✅")
+print("Dashboard tables loaded")
 
-# ------------------------------------------------------------------
-# FastAPI app
-# ------------------------------------------------------------------
+
 app = FastAPI(title="MoodWave ML Service", version="1.0.0")
 
 app.add_middleware(
@@ -79,9 +67,7 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-# ------------------------------------------------------------------
-# Request schemas
-# ------------------------------------------------------------------
+
 class AudioFeatures(BaseModel):
     """Full 13-feature set — used by popularity, genre, predict/all."""
     danceability: float = Field(..., ge=0, le=1)
@@ -149,9 +135,7 @@ class SmartPredictRequest(BaseModel):
     limit: int = Field(default=10, ge=1, le=50)
 
 
-# ------------------------------------------------------------------
-# Quadrant averages + helpers
-# ------------------------------------------------------------------
+
 QUADRANT_AVERAGES = {
     "Euphoric":    {"danceability": 0.72, "energy": 0.75, "key": 5, "loudness": -6,  "mode": 1, "speechiness": 0.08, "acousticness": 0.20, "instrumentalness": 0.02, "liveness": 0.16, "valence": 0.70, "tempo": 121, "duration_ms": 210000, "time_signature": 4},
     "Peaceful":    {"danceability": 0.55, "energy": 0.35, "key": 5, "loudness": -12, "mode": 1, "speechiness": 0.05, "acousticness": 0.65, "instrumentalness": 0.15, "liveness": 0.14, "valence": 0.65, "tempo": 110, "duration_ms": 200000, "time_signature": 4},
@@ -184,17 +168,13 @@ def _clean_records(df: pd.DataFrame) -> list:
     return records
 
 
-# ------------------------------------------------------------------
-# Health
-# ------------------------------------------------------------------
+
 @app.get("/health")
 def health():
     return {"status": "ok", "service": "moodwave-ml"}
 
 
-# ------------------------------------------------------------------
-# Model 1 — Popularity (13 features)
-# ------------------------------------------------------------------
+
 @app.post("/predict/popularity")
 def predict_popularity(f: AudioFeatures):
     df = pd.DataFrame([f.to_dict()])[POPULARITY_FEATURES]
@@ -203,9 +183,7 @@ def predict_popularity(f: AudioFeatures):
     return {"popularity": round(score, 2)}
 
 
-# ------------------------------------------------------------------
-# Model 2 — Mood (11 features, NO energy/valence)
-# ------------------------------------------------------------------
+
 @app.post("/predict/mood")
 def predict_mood(f: MoodFeatures):
     df = pd.DataFrame([f.to_dict()])[MOOD_FEATURES]
@@ -218,9 +196,7 @@ def predict_mood(f: MoodFeatures):
     }
 
 
-# ------------------------------------------------------------------
-# Model 3 — Genre (13 features)
-# ------------------------------------------------------------------
+
 @app.post("/predict/genre")
 def predict_genre(f: AudioFeatures):
     df = pd.DataFrame([f.to_dict()])[GENRE_FEATURES]
@@ -235,9 +211,7 @@ def predict_genre(f: AudioFeatures):
     }
 
 
-# ------------------------------------------------------------------
-# Model 4 — Cluster (10 continuous features)
-# ------------------------------------------------------------------
+
 @app.post("/predict/cluster")
 def predict_cluster(f: ContinuousFeatures):
     df = pd.DataFrame([f.to_dict()])
@@ -255,9 +229,7 @@ def predict_cluster(f: ContinuousFeatures):
     }
 
 
-# ------------------------------------------------------------------
-# Model 5 — PCA (10 continuous features)
-# ------------------------------------------------------------------
+
 @app.post("/project/pca")
 def project_pca(f: ContinuousFeatures):
     df = pd.DataFrame([f.to_dict()])
@@ -267,9 +239,7 @@ def project_pca(f: ContinuousFeatures):
     return {"pca_1": float(coords[0]), "pca_2": float(coords[1])}
 
 
-# ------------------------------------------------------------------
-# Model 6 — Similarity (10 continuous features)
-# ------------------------------------------------------------------
+
 @app.post("/predict/similar")
 def predict_similar(f: ContinuousFeatures, n: int = 5):
     bundle = similarity_bundle
@@ -280,9 +250,7 @@ def predict_similar(f: ContinuousFeatures, n: int = 5):
     return {"tracks": tracks}
 
 
-# ------------------------------------------------------------------
-# Combined endpoints
-# ------------------------------------------------------------------
+
 @app.post("/predict/all")
 def predict_all(f: AudioFeatures):
     """Returns mood + popularity + genre + cluster + PCA + similar songs."""
@@ -328,9 +296,7 @@ def predict_all(f: AudioFeatures):
     }
 
 
-# ------------------------------------------------------------------
-# Recommendation by energy + valence
-# ------------------------------------------------------------------
+
 @app.post("/recommend")
 def recommend(req: RecommendRequest):
     df = track_catalog
@@ -354,9 +320,7 @@ def recommend(req: RecommendRequest):
     }
 
 
-# ------------------------------------------------------------------
-# Smart predict (energy + valence only → all models)
-# ------------------------------------------------------------------
+
 @app.post("/predict/smart")
 def predict_smart(req: SmartPredictRequest):
     quadrant = _quadrant_from_ev(req.energy, req.valence)
@@ -418,9 +382,7 @@ def predict_smart(req: SmartPredictRequest):
     }
 
 
-# ------------------------------------------------------------------
-# Analytical endpoints
-# ------------------------------------------------------------------
+
 @app.get("/timeline")
 def timeline():
     return _clean_records(yearly_mood_trends)

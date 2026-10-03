@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { NavLink, useNavigate } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
+import { useWindowManager } from "../context/WindowManagerContext";
 import LoginRequiredModal from "./LoginRequiredModal";
 import Win98Icon from "./Win98Icon";
 
@@ -14,6 +15,7 @@ const PUBLIC_MENU = [
 export default function RetroMenu() {
   const { isAuthenticated, logout } = useAuth();
   const navigate = useNavigate();
+  const windowManager = useWindowManager();
   const [showLoginModal, setShowLoginModal] = useState(false);
   const [blockedFeature, setBlockedFeature] = useState("");
 
@@ -27,7 +29,11 @@ export default function RetroMenu() {
 
   const handleLogout = () => {
     logout();
-    navigate("/");
+    if (windowManager?.closeAllWindows) {
+      windowManager.closeAllWindows();
+    } else {
+      navigate("/");
+    }
   };
 
   return (

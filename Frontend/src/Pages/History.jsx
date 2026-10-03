@@ -87,7 +87,7 @@ export default function History() {
   };
 
   return (
-    <RetroWindow title="Prediction History" appIcon="H" statusText={`${filtered.length} item${filtered.length === 1 ? "" : "s"}`}>
+    <RetroWindow windowId="/history" title="Prediction History" appIcon="H" statusText={`${filtered.length} item${filtered.length === 1 ? "" : "s"}`}>
       <div className="win98-app-page win98-history-page">
         <div className="win98-history-toolbar">
           <span>Show:</span>

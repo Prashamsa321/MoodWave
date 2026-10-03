@@ -43,7 +43,7 @@ export default function Profile() {
 
   if (!user) {
     return (
-      <RetroWindow title="User Properties" appIcon="U">
+      <RetroWindow windowId="/profile" title="User Properties" appIcon="U">
         <div className="win98-app-page">
           <div className="win98-message-box is-error">
             <span className="win98-message-icon">!</span>
@@ -58,7 +58,7 @@ export default function Profile() {
   }
 
   return (
-    <RetroWindow title="User Properties" appIcon="U" statusText={`Logged on as ${user.email}`}>
+    <RetroWindow windowId="/profile" title="User Properties" appIcon="U" statusText={`Logged on as ${user.email}`}>
       <div className="win98-app-page win98-profile-page">
         <div className="win98-property-tabs" role="tablist" aria-label="Profile sections">
           <button type="button" className="win98-tab is-active">General</button>

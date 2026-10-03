@@ -27,6 +27,7 @@ export default function Findings() {
 
   return (
     <RetroWindow
+      windowId="/findings"
       title="MoodWave Reports - Microsoft Word"
       appIcon="W"
       windowClassName="report-app-window"
